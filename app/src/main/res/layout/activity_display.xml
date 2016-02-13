@@ -10,7 +10,8 @@
         android:text="@string/back"
         android:id="@+id/buttonBack"
         android:gravity="center_horizontal"
-        android:textAlignment="gravity" />
+        android:textAlignment="gravity"
+        android:onClick="onDisplayActivityBackButtonClick" />
 
     <TextView
         android:layout_width="match_parent"

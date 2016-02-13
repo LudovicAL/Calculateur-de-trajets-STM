@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.Spinner;
@@ -57,6 +58,17 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onSearchButtonClick(View v) {
+        Intent newIntent = new Intent(getApplicationContext(), SelectorActivity.class);
+        newIntent.putExtra("destination", spinner.getSelectedItem().toString());
+        newIntent.putExtra("year", datePicker.getYear());
+        newIntent.putExtra("month", datePicker.getMonth());
+        newIntent.putExtra("day", datePicker.getDayOfMonth());
+        newIntent.putExtra("hour", timePicker.getHour());
+        newIntent.putExtra("minute", timePicker.getMinute());
+        startActivity(newIntent);
     }
 
     private void locateAndSetDatePicker() {

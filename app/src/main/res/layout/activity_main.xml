@@ -76,7 +76,8 @@
             android:id="@+id/buttonSearch"
             android:textAlignment="gravity"
             android:gravity="center_vertical|center_horizontal"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:onClick="onSearchButtonClick" />
 
     </LinearLayout>
 </ScrollView>
