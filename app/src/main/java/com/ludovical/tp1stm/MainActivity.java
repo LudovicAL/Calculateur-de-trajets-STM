@@ -10,47 +10,37 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.DatePicker;
+import android.widget.Spinner;
+import android.widget.TimePicker;
+
 import org.apache.commons.io.IOUtils;
 import java.io.IOException;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
     public static final int DATABASE_INITIAL_SCHEMA = 1;
+    private Spinner spinner;
+    private DatePicker datePicker;
+    private TimePicker timePicker;
+    private ArrayAdapter<CharSequence> spinnerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //Locate and fill the spinner
+        locateAndFillSpinner();
+        //Locate and set the date picker
+        locateAndSetDatePicker();
+        //Locate the time picker
+        timePicker = (TimePicker) findViewById(R.id.timePicker);
         //Create database
-        SQLiteDatabase db = openOrCreateDatabase("stm_gtfs", MODE_PRIVATE, null);
+        //SQLiteDatabase db = openOrCreateDatabase("stm_gtfs", MODE_PRIVATE, null);
         //Prepare Schema
-        prepareSchema(db);
-
-        /*
-        startService(new Intent(this, FillDataBaseService.class));
-
-        new AsyncTask<String, Integer, Void>() {
-            @Override
-            protected Void doInBackground(String... params) {
-
-                return null;
-            }
-
-            @Override
-            protected void onProgressUpdate(Integer... progress) {
-
-            }
-
-            @Override
-            protected void onPostExecute (Void result) {
-
-            }
-        }.execute ("route", "stop_times", "stops", "trips");
-
-        private void insertData(String tableName, InputStream data) {
-
-        }
-        */
+        //prepareSchema(db);
     }
 
     @Override
@@ -62,17 +52,23 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
+    }
+
+    private void locateAndSetDatePicker() {
+        datePicker = (DatePicker) findViewById(R.id.datePicker);
+        datePicker.setMinDate(new Date().getTime());
+    }
+
+    private void locateAndFillSpinner() {
+        spinner = (Spinner) findViewById(R.id.spinnerDestinations);
+        spinnerAdapter = ArrayAdapter.createFromResource(this, R.array.destinations_values, android.R.layout.simple_spinner_item);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(spinnerAdapter);
     }
 
     private void prepareSchema(SQLiteDatabase db) {
@@ -95,10 +91,9 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onRollback() {
-                        Log.e("", "La création du schéma SQL a échouée.");
+                        Log.e("", "The SQL schema creation failed");
                     }
                 });
-
                 for (String statement : schema.split(";")) {
                     db.execSQL(statement);
                 }

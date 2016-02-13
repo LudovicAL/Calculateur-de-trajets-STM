@@ -12,7 +12,6 @@ import android.widget.Toast;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -43,53 +42,56 @@ public class FillDataBaseService extends IntentService {
 
         db.setForeignKeyConstraintsEnabled(true);
 
-        try {
-            while ((currentEntry = zis.getNextEntry()) != null) {
+        if (tables != null) {
+            try {
+                while ((currentEntry = zis.getNextEntry()) != null) {
 
-                for (int i = 0; i < tables.length; i++) {
+                    for (int i = 0; i < tables.length; i++) {
 
-                    String tableName = tables[i];
+                        String tableName = tables[i];
 
-                    Bundle progressBundle = new Bundle();
+                        Bundle progressBundle = new Bundle();
 
-                    progressBundle.putInt(Notification.EXTRA_PROGRESS, i);
-                    progressBundle.putInt(Notification.EXTRA_PROGRESS_MAX, tables.length);
+                        progressBundle.putInt(Notification.EXTRA_PROGRESS, i);
+                        progressBundle.putInt(Notification.EXTRA_PROGRESS_MAX, tables.length);
 
-                    /*
-                    nm.notify(R.id.PROGRESS_NOTIFICATION_ID, new Notification.Builder(FillDatabaseService.this)
-                            .setContentTitle("Chargement de la table " + tableName + "...")
-                            .setCategory(Notification.CATEGORY_PROGRESS)
-                            .setExtras(progressBundle)
-                            .build());
-                    */
+                        /*
+                        nm.notify(R.id.PROGRESS_NOTIFICATION_ID, new Notification.Builder(FillDatabaseService.this)
+                                .setContentTitle("Chargement de la table " + tableName + "...")
+                                .setCategory(Notification.CATEGORY_PROGRESS)
+                                .setExtras(progressBundle)
+                                .build()
+                        );
+                        */
 
-                    if (tableName.equals(currentEntry.getName().substring(0, currentEntry.getName().lastIndexOf(".")))) {
+                        if (tableName.equals(currentEntry.getName().substring(0, currentEntry.getName().lastIndexOf(".")))) {
 
-                        CSVParser parser = new CSVParser(new InputStreamReader(zis), CSVFormat.RFC4180);
-                        Iterator<CSVRecord> iter = parser.iterator();
-                        while (iter.hasNext()) {
-                            CSVRecord row = iter.next();
+                            CSVParser parser = new CSVParser(new InputStreamReader(zis), CSVFormat.RFC4180);
+                            Iterator<CSVRecord> iter = parser.iterator();
+                            while (iter.hasNext()) {
+                                CSVRecord row = iter.next();
 
-                            // TODO: ...
-                            if (row.getRecordNumber() % BATCH_SIZE == 0)
-                                db.beginTransaction();
+                                // TODO: ...
+                                if (row.getRecordNumber() % BATCH_SIZE == 0)
+                                    db.beginTransaction();
 
-                            ContentValues values = new ContentValues();
+                                ContentValues values = new ContentValues();
 
-                            for (Map.Entry<String, String> e : row.toMap().entrySet()) {
-                                values.put(e.getKey(), e.getValue());
+                                for (Map.Entry<String, String> e : row.toMap().entrySet()) {
+                                    values.put(e.getKey(), e.getValue());
+                                }
+
+                                db.insert(tableName, null, values);
+
+                                if (row.getRecordNumber() % BATCH_SIZE == BATCH_SIZE - 1 || !iter.hasNext())
+                                    db.endTransaction();
                             }
-
-                            db.insert(tableName, null, values);
-
-                            if (row.getRecordNumber() % BATCH_SIZE == BATCH_SIZE - 1 || !iter.hasNext())
-                                db.endTransaction();
                         }
                     }
                 }
+            } catch (Exception e) {
+                Log.e("", "", e);
             }
-        } catch (IOException err) {
-            Log.e("", "", err);
         }
 
         Toast.makeText(FillDataBaseService.this, "Imported tables " + Arrays.toString(tables), Toast.LENGTH_SHORT).show();

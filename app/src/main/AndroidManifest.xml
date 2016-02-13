@@ -22,16 +22,20 @@
         <service
             android:name=".FillDataBaseService"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="true">
+        </service>
 
         <activity
             android:name=".SelectorActivity"
             android:label="@string/title_activity_selector"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+
         <activity
             android:name=".DisplayActivity"
             android:label="@string/title_activity_display"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
     </application>
 
 </manifest>

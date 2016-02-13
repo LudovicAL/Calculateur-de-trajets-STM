@@ -2,10 +2,22 @@
     <string name="app_name">TP1STM</string>
     <string name="action_settings">Settings</string>
     <string name="selectDestination">Select a destination</string>
-    <string name="selectDate">Select a date</string>
-    <string name="selectTime">Select a time</string>
+    <string name="selectDate">Select a departure date</string>
+    <string name="selectTime">Select a departure time</string>
     <string name="search">Search</string>
     <string name="back">Back</string>
     <string name="title_activity_selector">SelectorActivity</string>
     <string name="title_activity_display">DisplayActivity</string>
+
+    <string name="origine_value">Pavillon André-Aisenstadt (45.5010115, −73.6179101)</string>
+
+    <string-array name="destinations_values">
+        <item>Pub McCarold (45.4961719, -73.6247091)</item>
+        <item>Centre Bell (45.4960704, -73.571504)</item>
+        <item>Club Soda (45.5100687, -73.5654437)</item>
+        <item>Station Angrignon (45.4445232, -73.6039207)</item>
+        <item>Aéroport Pierre-Elliott-Trudeau (45.4653214, -73.7400437)</item>
+        <item>Station Honoré-Beaugrand (45.5986388, -73.539667)</item>
+    </string-array>
+
 </resources>
