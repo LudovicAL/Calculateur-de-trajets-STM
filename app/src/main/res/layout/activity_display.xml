@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -13,7 +13,9 @@
         android:textAlignment="gravity"
         android:onClick="onDisplayActivityBackButtonClick"
         android:textSize="18sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:layout_alignParentStart="false"
+        android:layout_alignParentTop="true" />
 
     <TextView
         android:layout_width="match_parent"
@@ -23,7 +25,34 @@
         android:gravity="left"
         android:textSize="18sp"
         android:textStyle="bold"
-        android:background="@android:color/holo_blue_dark" />
+        android:background="@android:color/holo_blue_dark"
+        android:layout_below="@+id/buttonBack" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textViewRequiredTimeText"
+        android:textAlignment="gravity"
+        android:gravity="left"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_alignTop="@+id/buttonDummy1"
+        android:layout_toLeftOf="@+id/buttonDummy1"
+        android:text="@string/requiredTime" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/buttonDummy1"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/textViewChoosenRouteId"
+        android:clickable="false"
+        android:enabled="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:visibility="invisible"
+        android:width="0dp" />
 
     <TextView
         android:layout_width="match_parent"
@@ -32,7 +61,35 @@
         android:textAlignment="gravity"
         android:gravity="left"
         android:textSize="18sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:layout_toRightOf="@+id/buttonDummy1"
+        android:layout_alignTop="@+id/buttonDummy1" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textViewDepartureTimeText"
+        android:textAlignment="gravity"
+        android:gravity="left"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_alignTop="@+id/buttonDummy2"
+        android:layout_toLeftOf="@+id/buttonDummy2"
+        android:text="@string/departureTime" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/buttonDummy2"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/buttonDummy1"
+        android:clickable="false"
+        android:enabled="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:visibility="invisible"
+        android:width="0dp" />
 
     <TextView
         android:layout_width="match_parent"
@@ -42,7 +99,35 @@
         android:gravity="left"
         android:textSize="18sp"
         android:textStyle="bold"
-        android:background="#e8e5e5" />
+        android:layout_alignParentTop="false"
+        android:layout_alignTop="@+id/buttonDummy2"
+        android:layout_toRightOf="@+id/buttonDummy2" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textViewArrivalTimeText"
+        android:textAlignment="gravity"
+        android:gravity="left"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_alignTop="@+id/buttonDummy3"
+        android:layout_toLeftOf="@+id/buttonDummy3"
+        android:text="@string/arrivalTime" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/buttonDummy3"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/buttonDummy2"
+        android:clickable="false"
+        android:enabled="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:visibility="invisible"
+        android:width="0dp" />
 
     <TextView
         android:layout_width="match_parent"
@@ -51,7 +136,35 @@
         android:textAlignment="gravity"
         android:gravity="left"
         android:textSize="18sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:layout_alignTop="@+id/buttonDummy3"
+        android:layout_toRightOf="@+id/buttonDummy3" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textViewWalkDistanceText"
+        android:textAlignment="gravity"
+        android:gravity="left"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_alignTop="@+id/buttonDummy4"
+        android:layout_toLeftOf="@+id/buttonDummy4"
+        android:text="@string/walkDistance" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/buttonDummy4"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/buttonDummy3"
+        android:clickable="false"
+        android:enabled="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:visibility="invisible"
+        android:width="0dp" />
 
     <TextView
         android:layout_width="match_parent"
@@ -61,13 +174,42 @@
         android:gravity="left"
         android:textSize="18sp"
         android:textStyle="bold"
-        android:background="#e8e5e5" />
+        android:layout_alignTop="@+id/buttonDummy4"
+        android:layout_toRightOf="@+id/buttonDummy4" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textViewCorrespondancesText"
+        android:textAlignment="gravity"
+        android:gravity="left"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_alignTop="@+id/buttonDummy5"
+        android:layout_toLeftOf="@+id/buttonDummy5"
+        android:text="@string/correspondanes" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/buttonDummy5"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/buttonDummy4"
+        android:clickable="false"
+        android:enabled="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:visibility="invisible"
+        android:width="0dp" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/textViewCorrespondances"
         android:textSize="18sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:layout_alignTop="@+id/buttonDummy5"
+        android:layout_toRightOf="@+id/buttonDummy5" />
 
-</LinearLayout>
+</RelativeLayout>

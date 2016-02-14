@@ -24,12 +24,9 @@ public class Route {
     @Override
     public String toString() {
         return "Route{" +
-                "requiredTimeHours=" + requiredTimeHours +
-                ", requiredTimeMinutes=" + requiredTimeMinutes +
-                ", departureTimeHours=" + departureTimeHours +
-                ", departureTimeMinutes=" + departureTimeMinutes +
-                ", arrivalTimeHours=" + arrivalTimeHours +
-                ", arrivalTimeMinutes=" + arrivalTimeMinutes +
+                "requiredTime=" + CommonTools.timeToString(requiredTimeMinutes, requiredTimeHours) +
+                ", departureTime=" + CommonTools.timeToString(departureTimeMinutes, departureTimeHours) +
+                ", arrivalTime=" + CommonTools.timeToString(arrivalTimeMinutes, arrivalTimeHours) +
                 ", walkDistance=" + walkDistance +
                 ", correspondances=" + correspondances +
                 '}';

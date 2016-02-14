@@ -15,7 +15,6 @@ import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.TimePicker;
-
 import org.apache.commons.io.IOUtils;
 import java.io.IOException;
 import java.util.Date;

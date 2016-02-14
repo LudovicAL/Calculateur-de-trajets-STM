@@ -47,5 +47,4 @@ public class DisplayActivity extends AppCompatActivity {
     public void onDisplayActivityBackButtonClick(View v) {
         finish();
     }
-
 }

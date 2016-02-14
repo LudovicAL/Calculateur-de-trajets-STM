@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">TP1STM</string>
+    <string name="app_name">TP STM</string>
     <string name="action_settings">Settings</string>
     <string name="selectDestination">Select a destination</string>
     <string name="selectDate">Select a departure date</string>
@@ -8,9 +8,12 @@
     <string name="back">Back</string>
     <string name="itineraryFound">Found itineraries</string>
     <string name="itineraryNumber">Itinerary number :</string>
+    <string name="requiredTime">Required time</string>
+    <string name="departureTime">Departure time</string>
+    <string name="arrivalTime">Arrival time</string>
+    <string name="walkDistance">Walk distance</string>
+    <string name="correspondanes">Correspondance(s)</string>
     <string name="meter">meter(s)</string>
-    <string name="title_activity_selector">SelectorActivity</string>
-    <string name="title_activity_display">DisplayActivity</string>
 
     <string name="origine_value">Pavillon André-Aisenstadt (45.5010115, −73.6179101)</string>
 
