@@ -6,6 +6,9 @@
     <string name="selectTime">Select a departure time</string>
     <string name="search">Search</string>
     <string name="back">Back</string>
+    <string name="itineraryFound">Found itineraries</string>
+    <string name="itineraryNumber">Itinerary number :</string>
+    <string name="meter">meter(s)</string>
     <string name="title_activity_selector">SelectorActivity</string>
     <string name="title_activity_display">DisplayActivity</string>
 

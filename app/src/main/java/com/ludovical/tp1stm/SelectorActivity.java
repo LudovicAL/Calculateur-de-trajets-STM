@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -29,20 +30,33 @@ public class SelectorActivity extends AppCompatActivity {
         //Retrieve data passed by previous activity
         retrieveIntentInformation();
         Toast.makeText(SelectorActivity.this, destination + " : " + year + "/" + month + "/" + day + " || " + hour + ":" + minute, Toast.LENGTH_LONG).show();
-        //Locate and prepare the list view
+        //Prepare the routes objects
+        prepareRouteObjects();
+        //Locate and prepare the listview
         locateAndPrepareListView();
+    }
+
+    private void prepareRouteObjects() {
+        routeList = new ArrayList<>();
+        routeList.add(new Route(1, 2, 3, 4, 5, 6, 7.7f, 8));
+        routeList.add(new Route(2, 2, 3, 4, 5, 6, 7.7f, 8));
+        routeList.add(new Route(3, 2, 3, 4, 5, 6, 7.7f, 8));
+        routeList.add(new Route(4, 2, 3, 4, 5, 6, 7.7f, 8));
+        routeList.add(new Route(5, 2, 3, 4, 5, 6, 7.7f, 8));
     }
 
     private void locateAndPrepareListView() {
         listView = (ListView)findViewById(R.id.listViewResults);
         listViewAdapter = new ListViewAdapter(this, routeList);
         listView.setAdapter(listViewAdapter);
+        /*
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //listViewAdapter.fonctionQuelquonque(position);
+                listViewAdapter.fonctionQuelquonque(position);
             }
         });
+        */
     }
 
     private void retrieveIntentInformation() {

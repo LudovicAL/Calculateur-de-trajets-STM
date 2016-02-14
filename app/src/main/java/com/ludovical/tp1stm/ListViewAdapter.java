@@ -1,6 +1,5 @@
 package com.ludovical.tp1stm;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -58,7 +57,15 @@ public class ListViewAdapter extends BaseAdapter {
     //Called when user clicks an item of the listview
     public void displayDetails(int position) {
         Intent newIntent = new Intent(context, DisplayActivity.class);
-        newIntent.putExtra("Clef", "Message");
-        ((Activity) context).startActivity(newIntent);
+        newIntent.putExtra("choosenRouteId", position);
+        newIntent.putExtra("requiredTimeHours", routeList.get(position).getRequiredTimeHours());
+        newIntent.putExtra("requiredTimeMinutes", routeList.get(position).getRequiredTimeMinutes());
+        newIntent.putExtra("departureTimeHours", routeList.get(position).getDepartureTimeHours());
+        newIntent.putExtra("departureTimeMinutes", routeList.get(position).getDepartureTimeMinutes());
+        newIntent.putExtra("arrivalTimeHours", routeList.get(position).getArrivalTimeHours());
+        newIntent.putExtra("arrivalTimeMinutes", routeList.get(position).getArrivalTimeMinutes());
+        newIntent.putExtra("walkDistance", routeList.get(position).getWalkDistance());
+        newIntent.putExtra("correspondances", routeList.get(position).getCorrespondances());
+        context.startActivity(newIntent);
     }
 }

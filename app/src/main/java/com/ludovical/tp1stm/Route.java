@@ -8,9 +8,9 @@ public class Route {
     private int arrivalTimeHours;
     private int arrivalTimeMinutes;
     private float walkDistance;
-    private int changesAmount;
+    private int correspondances;
 
-    public Route(int requiredTimeHours, int requiredTimeMinutes, int departureTimeHours, int departureTimeMinutes, int arrivalTimeHours, int arrivalTimeMinutes, float walkDistance, int changesAmount) {
+    public Route(int requiredTimeHours, int requiredTimeMinutes, int departureTimeHours, int departureTimeMinutes, int arrivalTimeHours, int arrivalTimeMinutes, float walkDistance, int correspondances) {
         this.requiredTimeHours = requiredTimeHours;
         this.requiredTimeMinutes = requiredTimeMinutes;
         this.departureTimeHours = departureTimeHours;
@@ -18,7 +18,7 @@ public class Route {
         this.arrivalTimeHours = arrivalTimeHours;
         this.arrivalTimeMinutes = arrivalTimeMinutes;
         this.walkDistance = walkDistance;
-        this.changesAmount = changesAmount;
+        this.correspondances = correspondances;
     }
 
     @Override
@@ -31,7 +31,7 @@ public class Route {
                 ", arrivalTimeHours=" + arrivalTimeHours +
                 ", arrivalTimeMinutes=" + arrivalTimeMinutes +
                 ", walkDistance=" + walkDistance +
-                ", changesAmount=" + changesAmount +
+                ", correspondances=" + correspondances +
                 '}';
     }
 
@@ -91,11 +91,11 @@ public class Route {
         this.walkDistance = walkDistance;
     }
 
-    public int getChangesAmount() {
-        return changesAmount;
+    public int getCorrespondances() {
+        return correspondances;
     }
 
-    public void setChangesAmount(int changesAmount) {
-        this.changesAmount = changesAmount;
+    public void setCorrespondances(int correspondances) {
+        this.correspondances = correspondances;
     }
 }

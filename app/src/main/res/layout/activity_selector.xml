@@ -11,15 +11,21 @@
         android:text="@string/back"
         android:id="@+id/buttonBack"
         android:gravity="center_horizontal"
-        android:textAlignment="gravity" />
+        android:textAlignment="gravity"
+        android:onClick="onSelectorActivityBackButtonClick"
+        android:textStyle="bold"
+        android:textSize="18sp" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="New Text"
+        android:text="@string/itineraryFound"
         android:id="@+id/textViewResults"
         android:textAlignment="gravity"
-        android:gravity="center_horizontal" />
+        android:gravity="center_horizontal"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:background="@android:color/holo_blue_dark" />
 
     <ListView
         android:layout_width="wrap_content"
