@@ -31,8 +31,8 @@ public class DisplayActivity extends AppCompatActivity {
         textViewRequiredTime.setText(CommonTools.timeToString(i.getIntExtra("requiredTimeMinutes", 0), i.getIntExtra("requiredTimeHours", 0)));
         textViewDepartureTime.setText(CommonTools.timeToString(i.getIntExtra("departureTimeMinutes", 0), i.getIntExtra("departureTimeHours", 0)));
         textViewArrivalTime.setText(CommonTools.timeToString(i.getIntExtra("arrivalTimeMinutes", 0), i.getIntExtra("arrivalTimeHours", 0)));
-        textViewWalkDistance.setText(i.getIntExtra("walkDistance", 0) + " " + getString(R.string.meter));
-        textViewCorrespondances.setText(i.getIntExtra("correspondances", 0));
+        textViewWalkDistance.setText(i.getFloatExtra("walkDistance", 0.0f) + " " + getString(R.string.meter));
+        textViewCorrespondances.setText("" + i.getIntExtra("correspondances", 0));
     }
 
     public void locateTextViews() {
