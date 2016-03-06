@@ -4,11 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
-
 import java.util.ArrayList;
 
 public class SelectorActivity extends AppCompatActivity {
@@ -36,6 +33,7 @@ public class SelectorActivity extends AppCompatActivity {
         locateAndPrepareListView();
     }
 
+    //Prepares Route objects
     private void prepareRouteObjects() {
         routeList = new ArrayList<>();
         routeList.add(new Route(1, 2, 3, 4, 5, 6, 7.7f, 8));
@@ -45,6 +43,7 @@ public class SelectorActivity extends AppCompatActivity {
         routeList.add(new Route(5, 2, 3, 4, 5, 6, 7.7f, 8));
     }
 
+    //Locates and prepares the ListView
     private void locateAndPrepareListView() {
         listView = (ListView)findViewById(R.id.listViewResults);
         listViewAdapter = new ListViewAdapter(this, routeList);
@@ -59,6 +58,7 @@ public class SelectorActivity extends AppCompatActivity {
         */
     }
 
+    //Retrieves the information passed with the Intent
     private void retrieveIntentInformation() {
         Intent i = getIntent();
         destination = i.getStringExtra("destination");
@@ -69,6 +69,7 @@ public class SelectorActivity extends AppCompatActivity {
         minute = i.getIntExtra("minute", -1);
     }
 
+    //Fired when user clicks the "Back" button
     public void onSelectorActivityBackButtonClick(View v) {
         finish();
     }

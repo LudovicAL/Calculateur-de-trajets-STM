@@ -25,6 +25,7 @@ public class DisplayActivity extends AppCompatActivity {
         retrieveIntentInformationAndprepareTextViews();
     }
 
+    //Retrieve the information passed with the Intent and prepares the textviews accordingly
     public void retrieveIntentInformationAndprepareTextViews() {
         Intent i = getIntent();
         textViewChoosenRouteId.setText(getString(R.string.itineraryNumber) + " " + i.getIntExtra("choosenRouteId", 0));
@@ -35,6 +36,7 @@ public class DisplayActivity extends AppCompatActivity {
         textViewCorrespondances.setText("" + i.getIntExtra("correspondances", 0));
     }
 
+    //Locates the required textview widgets
     public void locateTextViews() {
         textViewChoosenRouteId = (TextView)findViewById(R.id.textViewChoosenRouteId);
         textViewRequiredTime = (TextView)findViewById(R.id.textViewRequiredTime);
@@ -44,6 +46,7 @@ public class DisplayActivity extends AppCompatActivity {
         textViewCorrespondances = (TextView)findViewById(R.id.textViewCorrespondances);
     }
 
+    //Fired when users clicks the "Back" button
     public void onDisplayActivityBackButtonClick(View v) {
         finish();
     }

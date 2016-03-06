@@ -12,9 +12,10 @@ import android.widget.Toast;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.apache.commons.lang3.StringUtils;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -29,71 +30,58 @@ public class FillDataBaseService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-
         NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-
-        String[] tables =  intent.getExtras().getStringArray("tables");
-
-        ZipInputStream zis =  new ZipInputStream(getResources().openRawResource(R.raw.gtfs_stm));
-
+        String[] tables = intent.getExtras().getStringArray("tables");
+        Log.d("test", "Population des tables: " + StringUtils.join(tables, ", "));
+        ZipInputStream zis = new ZipInputStream(getResources().openRawResource(R.raw.gtfs_stm));
         ZipEntry currentEntry;
-
         SQLiteDatabase db = openOrCreateDatabase("stm_gtfs", MODE_PRIVATE, null);
-
-        db.setForeignKeyConstraintsEnabled(true);
-
-        if (tables != null) {
-            try {
-                while ((currentEntry = zis.getNextEntry()) != null) {
-
-                    for (int i = 0; i < tables.length; i++) {
-
-                        String tableName = tables[i];
-
+        // db.setForeignKeyConstraintsEnabled(true);
+        db.beginTransactionNonExclusive();
+        // vider les tables en question!
+        for (String table : tables) {
+            db.delete(table, null, new String[]{});
+        }
+        try {
+            while ((currentEntry = zis.getNextEntry()) != null) {
+                Log.d("test", currentEntry.getName());
+                for (int i = 0; i < tables.length; i++) {
+                    String tableName = tables[i];
+                    if (tableName.equals(currentEntry.getName().substring(0, currentEntry.getName().lastIndexOf(".")))) {
+                        Log.d("test", "Chargement de la table " + tableName + "...");
                         Bundle progressBundle = new Bundle();
-
                         progressBundle.putInt(Notification.EXTRA_PROGRESS, i);
                         progressBundle.putInt(Notification.EXTRA_PROGRESS_MAX, tables.length);
-
-                        /*
-                        nm.notify(R.id.PROGRESS_NOTIFICATION_ID, new Notification.Builder(FillDatabaseService.this)
+                        nm.notify(R.id.PROGRESS_NOTIFICATION_ID, new Notification.Builder(FillDataBaseService.this)
                                 .setContentTitle("Chargement de la table " + tableName + "...")
+                                .setSmallIcon(android.R.drawable.ic_popup_sync)
                                 .setCategory(Notification.CATEGORY_PROGRESS)
                                 .setExtras(progressBundle)
-                                .build()
-                        );
-                        */
-
-                        if (tableName.equals(currentEntry.getName().substring(0, currentEntry.getName().lastIndexOf(".")))) {
-
-                            CSVParser parser = new CSVParser(new InputStreamReader(zis), CSVFormat.RFC4180);
-                            Iterator<CSVRecord> iter = parser.iterator();
-                            while (iter.hasNext()) {
-                                CSVRecord row = iter.next();
-
-                                // TODO: ...
-                                if (row.getRecordNumber() % BATCH_SIZE == 0)
-                                    db.beginTransaction();
-
-                                ContentValues values = new ContentValues();
-
-                                for (Map.Entry<String, String> e : row.toMap().entrySet()) {
+                                .build());
+                        CSVParser parser = new CSVParser(new InputStreamReader(zis), CSVFormat.RFC4180.withHeader());
+                        for (CSVRecord row : parser) {
+                            // TODO: ...
+                            //if ((row.getRecordNumber() - 2) % BATCH_SIZE == 0)
+                            ContentValues values = new ContentValues();
+                            for (Map.Entry<String, String> e : row.toMap().entrySet()) {
+                                if (e.getValue().isEmpty()) { // gère les valeurs vides en CSV
+                                    values.putNull(e.getKey());
+                                } else {
                                     values.put(e.getKey(), e.getValue());
                                 }
-
-                                db.insert(tableName, null, values);
-
-                                if (row.getRecordNumber() % BATCH_SIZE == BATCH_SIZE - 1 || !iter.hasNext())
-                                    db.endTransaction();
                             }
+                            db.insert(tableName, null, values);
                         }
                     }
                 }
-            } catch (Exception e) {
-                Log.e("", "", e);
             }
+            db.setTransactionSuccessful();
+        } catch (IOException err) {
+            Log.d("test", "", err);
+        } finally {
+            nm.cancel(R.id.PROGRESS_NOTIFICATION_ID);
+            db.endTransaction();
         }
-
         Toast.makeText(FillDataBaseService.this, "Imported tables " + Arrays.toString(tables), Toast.LENGTH_SHORT).show();
     }
 }
