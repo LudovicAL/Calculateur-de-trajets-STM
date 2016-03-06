@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     public static final int MAX_WALKING_DISTANCE = 250;
     public static final int NUMBER_OF_RESULTS = 5;
     public static final int DATABASE_INITIAL_SCHEMA = 1;
+    public static final double[] A_COORDINATES = {45.5010115, 73.6179101};
 
     private Spinner spinner;
     private DatePicker datePicker;
@@ -69,11 +70,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void onSearchButtonClick(View v) {
         //Retreiving the coordinates
-        float aCoordinates[] = new float[2];
-        float bCoordinates[] = new float[2];
+        double bCoordinates[] = new double[2];
         //Querying the database
         Cursor cursor;
-        cursor = dbQuery(aCoordinates, bCoordinates);
+        cursor = dbQuery(bCoordinates);
         if (cursor != null) {
             //Launching the new Intent
             Intent newIntent = new Intent(getApplicationContext(), SelectorActivity.class);
@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
         spinner.setAdapter(spinnerAdapter);
     }
 
-    private Cursor dbQuery(float aCoordinates[], float bCoordinates[]) {
+    private Cursor dbQuery(double bCoordinates[]) {
         Cursor cursor;
         cursor = db.rawQuery("select *"
                 + " from stops as A_prime" //arrêts à A'
@@ -116,16 +116,16 @@ public class MainActivity extends AppCompatActivity {
                 //A' et B' sont le même trajet
                 + " A_prime_times.trip_id = B_prime_times.trip_id"
                 //marche jusqu'à l'arrêt (5 km/h)
-                + " and time(A_prime_times.departure_time) > time('now') + 1.37 * 51883.246273604 * (abs(A_prime.stop_lat - " + aCoordinates[1] + ") + abs(A_prime.stop_lon - " + aCoordinates[0] + "))" //d(A) < d(A')
+                + " and time(A_prime_times.departure_time) > time('now') + 1.37 * 51883.246273604 * (abs(A_prime.stop_lat - " + A_COORDINATES[0] + ") + abs(A_prime.stop_lon - " + A_COORDINATES[1] + "))" //d(A) < d(A')
                 // durée du trajet
                 + " and time(A_prime_times.departure_time) < time(B_prime_times.arrival_time)" //d(A') < d(B')
                 //filtre les points A' et B'
-                + " and 51883.246273604 * (abs(A_prime.stop_lat - " + aCoordinates[1] + ") + abs(A_prime.stop_lon - " + aCoordinates[0] + ")) <= " + MAX_WALKING_DISTANCE
-                + " and 51883.246273604 * (abs(" + bCoordinates[1] + " - B_prime.stop_lat) + abs(" + bCoordinates[0] + " - B_prime.stop_lon)) <= " + MAX_WALKING_DISTANCE
+                + " and 51883.246273604 * (abs(A_prime.stop_lat - " + A_COORDINATES[0] + ") + abs(A_prime.stop_lon - " + A_COORDINATES[1] + ")) <= " + MAX_WALKING_DISTANCE
+                + " and 51883.246273604 * (abs(" + bCoordinates[0] + " - B_prime.stop_lat) + abs(" + bCoordinates[1] + " - B_prime.stop_lon)) <= " + MAX_WALKING_DISTANCE
                 //distance maximale de marche
-                + " and 51883.246273604 * (abs(A_prime.stop_lat - " + aCoordinates[1] + ") + abs(A_prime.stop_lon - " + aCoordinates[0] + ") + abs(" + bCoordinates[1] + " - B_prime.stop_lat) + abs(" + bCoordinates[0] + " - B_prime.stop_lon)) <= " + MAX_WALKING_DISTANCE //d(A, A') + d(B', B)
+                + " and 51883.246273604 * (abs(A_prime.stop_lat - " + A_COORDINATES[0] + ") + abs(A_prime.stop_lon - " + A_COORDINATES[1] + ") + abs(" + bCoordinates[0] + " - B_prime.stop_lat) + abs(" + bCoordinates[1] + " - B_prime.stop_lon)) <= " + MAX_WALKING_DISTANCE //d(A, A') + d(B', B)
                 //minimise le temps d'arrivée t(B') + 1.37 * d(B', B)
-                + " order by time(B_prime_times.arrival_time) + 1.37 * 51883.246273604 * (abs (" + bCoordinates[1] + " - B_prime.stop_lat) + abs(" + bCoordinates[0] + " - B_prime.stop_lon))" //minimise t(B') + t(B)
+                + " order by time(B_prime_times.arrival_time) + 1.37 * 51883.246273604 * (abs (" + bCoordinates[0] + " - B_prime.stop_lat) + abs(" + bCoordinates[1] + " - B_prime.stop_lon))" //minimise t(B') + t(B)
                 + " limit " + NUMBER_OF_RESULTS, null);
         return cursor;
     }
