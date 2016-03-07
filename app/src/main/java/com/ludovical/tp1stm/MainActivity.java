@@ -15,31 +15,33 @@ import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.TimePicker;
 import android.widget.Toast;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     public static final int MAX_WALKING_DISTANCE = 250;
     public static final int NUMBER_OF_RESULTS = 5;
     public static final int DATABASE_INITIAL_SCHEMA = 1;
-    public static final double[] A_COORDINATES = {45.5010115, 73.6179101};
+    public static final Coordinates A_COORDINATES = new Coordinates("Judith Jasmin", 45.5010115, 73.6179101);
 
     private Spinner spinner;
     private DatePicker datePicker;
     private TimePicker timePicker;
     private ArrayAdapter<CharSequence> spinnerAdapter;
     private SQLiteDatabase db;
-
+    private List<Coordinates> coordinates;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //Create a new CoordinatesSet ArrayList
+        createCoordinatesSet();
         //Locating and filling the spinner
         locateAndFillSpinner();
         //Locating and setting the date picker
@@ -69,8 +71,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onSearchButtonClick(View v) {
-        //Retreiving the coordinates
-        double bCoordinates[] = new double[2];
+        Coordinates bCoordinates = coordinates.get(spinner.getSelectedItemPosition());
         //Querying the database
         Cursor cursor;
         cursor = dbQuery(bCoordinates);
@@ -90,6 +91,18 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    //Creates a coordinatesSet array
+    private void createCoordinatesSet() {
+        this.coordinates = new ArrayList<Coordinates>();
+        String[] destinationsArray = this.getResources().getStringArray(R.array.destinations_values);
+        for(String s : destinationsArray) {
+            String name = s.substring(0, s.indexOf("(") - 1);
+            double latitude = CommonTools.stringToDouble(s.substring(s.indexOf("(") + 1, s.indexOf(",") - 1));
+            double longitude = CommonTools.stringToDouble(s.substring(s.indexOf(",") + 1, s.indexOf(")") - 1));
+            coordinates.add(new Coordinates(name, latitude, longitude));
+        }
+    }
+
     //Locates the date picker and sets today as its minimum selectable date
     private void locateAndSetDatePicker() {
         datePicker = (DatePicker) findViewById(R.id.datePicker);
@@ -104,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
         spinner.setAdapter(spinnerAdapter);
     }
 
-    private Cursor dbQuery(double bCoordinates[]) {
+    private Cursor dbQuery(Coordinates bCoordinates) {
         Cursor cursor;
         cursor = db.rawQuery("select *"
                 + " from stops as A_prime" //arrêts à A'
@@ -116,16 +129,16 @@ public class MainActivity extends AppCompatActivity {
                 //A' et B' sont le même trajet
                 + " A_prime_times.trip_id = B_prime_times.trip_id"
                 //marche jusqu'à l'arrêt (5 km/h)
-                + " and time(A_prime_times.departure_time) > time('now') + 1.37 * 51883.246273604 * (abs(A_prime.stop_lat - " + A_COORDINATES[0] + ") + abs(A_prime.stop_lon - " + A_COORDINATES[1] + "))" //d(A) < d(A')
+                + " and time(A_prime_times.departure_time) > time('now') + 1.37 * 51883.246273604 * (abs(A_prime.stop_lat - " + A_COORDINATES.getLatitude() + ") + abs(A_prime.stop_lon - " + A_COORDINATES.getLongitude() + "))" //d(A) < d(A')
                 // durée du trajet
                 + " and time(A_prime_times.departure_time) < time(B_prime_times.arrival_time)" //d(A') < d(B')
                 //filtre les points A' et B'
-                + " and 51883.246273604 * (abs(A_prime.stop_lat - " + A_COORDINATES[0] + ") + abs(A_prime.stop_lon - " + A_COORDINATES[1] + ")) <= " + MAX_WALKING_DISTANCE
-                + " and 51883.246273604 * (abs(" + bCoordinates[0] + " - B_prime.stop_lat) + abs(" + bCoordinates[1] + " - B_prime.stop_lon)) <= " + MAX_WALKING_DISTANCE
+                + " and 51883.246273604 * (abs(A_prime.stop_lat - " + A_COORDINATES.getLatitude() + ") + abs(A_prime.stop_lon - " + A_COORDINATES.getLongitude() + ")) <= " + MAX_WALKING_DISTANCE
+                + " and 51883.246273604 * (abs(" + bCoordinates.getLatitude() + " - B_prime.stop_lat) + abs(" + bCoordinates.getLongitude() + " - B_prime.stop_lon)) <= " + MAX_WALKING_DISTANCE
                 //distance maximale de marche
-                + " and 51883.246273604 * (abs(A_prime.stop_lat - " + A_COORDINATES[0] + ") + abs(A_prime.stop_lon - " + A_COORDINATES[1] + ") + abs(" + bCoordinates[0] + " - B_prime.stop_lat) + abs(" + bCoordinates[1] + " - B_prime.stop_lon)) <= " + MAX_WALKING_DISTANCE //d(A, A') + d(B', B)
+                + " and 51883.246273604 * (abs(A_prime.stop_lat - " + A_COORDINATES.getLatitude() + ") + abs(A_prime.stop_lon - " + A_COORDINATES.getLongitude() + ") + abs(" + bCoordinates.getLatitude() + " - B_prime.stop_lat) + abs(" + bCoordinates.getLongitude() + " - B_prime.stop_lon)) <= " + MAX_WALKING_DISTANCE //d(A, A') + d(B', B)
                 //minimise le temps d'arrivée t(B') + 1.37 * d(B', B)
-                + " order by time(B_prime_times.arrival_time) + 1.37 * 51883.246273604 * (abs (" + bCoordinates[0] + " - B_prime.stop_lat) + abs(" + bCoordinates[1] + " - B_prime.stop_lon))" //minimise t(B') + t(B)
+                + " order by time(B_prime_times.arrival_time) + 1.37 * 51883.246273604 * (abs (" + bCoordinates.getLatitude() + " - B_prime.stop_lat) + abs(" + bCoordinates.getLongitude() + " - B_prime.stop_lon))" //minimise t(B') + t(B)
                 + " limit " + NUMBER_OF_RESULTS, null);
         return cursor;
     }
