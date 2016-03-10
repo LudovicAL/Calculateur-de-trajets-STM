@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TP STM</string>
+    <string name="action_settings">Options</string>
+    <string name="arrivalTime">Heure d\'arrivée</string>
+    <string name="back">Retour</string>
+    <string name="departureTime">Heure de départ</string>
+    <string name="error">Une erreur est survenue</string>
+    <string name="itineraryFound">Itinéraires trouvés</string>
+    <string name="itineraryNumber">Nombe d\'itinéraire(s)</string>
+    <string name="meter">mètre(s)</string>
+    <string name="requiredTime">Temps requis</string>
+    <string name="search">Chercher</string>
+    <string name="selectDate">Selectionnez une date</string>
+    <string name="selectDestination">Sélectionnez une destination</string>
+    <string name="selectTime">Sélectionnez une heure</string>
+    <string name="walkDistance">Distance de marche</string>
+</resources>

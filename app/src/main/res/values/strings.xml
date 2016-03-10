@@ -7,15 +7,15 @@
     <string name="search">Search</string>
     <string name="back">Back</string>
     <string name="itineraryFound">Found itineraries</string>
-    <string name="itineraryNumber">Itinerary number :</string>
+    <string name="itineraryNumber">Itinary number</string>
     <string name="requiredTime">Required time</string>
     <string name="departureTime">Departure time</string>
     <string name="arrivalTime">Arrival time</string>
     <string name="walkDistance">Walk distance</string>
-    <string name="correspondanes">Correspondance(s)</string>
+    <string name="correspondanes" translatable="false">Correspondance(s)</string>
     <string name="meter">meter(s)</string>
     <string name="error">An error occured</string>
-    <string name="origine_value">Pavillon André-Aisenstadt (45.5010115, −73.6179101)</string>
+    <string name="origine_value" translatable="false">Pavillon André-Aisenstadt (45.5010115, −73.6179101)</string>
 
     <string-array name="destinations_values">
         <item>Pub McCarold (45.4961719, -73.6247091)</item>
