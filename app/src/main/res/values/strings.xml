@@ -11,11 +11,18 @@
     <string name="requiredTime">Required time</string>
     <string name="departureTime">Departure time</string>
     <string name="arrivalTime">Arrival time</string>
-    <string name="walkDistance">Walk distance</string>
     <string name="correspondanes" translatable="false">Correspondance(s)</string>
     <string name="meter">meter(s)</string>
     <string name="error">An error occured</string>
     <string name="origine_value" translatable="false">Pavillon André-Aisenstadt (45.5010115, −73.6179101)</string>
+    <string name="distanceA">Distance from stop</string>
+    <string name="distanceDestination">Distance from destination</string>
+    <string name="boardingStopName">Boarding stop name</string>
+    <string name="arrivalStopName">Arrival stop name</string>
+    <string name="transitBoardingTime">Transit boarding time</string>
+    <string name="transitArrivalTime">Transit arrival time</string>
+    <string name="totalRequiredTime">Total required time</string>
+    <string name="totalWalkingDistance">Total walking distance</string>
 
     <string-array name="destinations_values">
         <item>Pub McCarold (45.4961719, -73.6247091)</item>

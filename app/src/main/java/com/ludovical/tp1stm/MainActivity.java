@@ -20,15 +20,25 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static final int MAX_WALKING_DISTANCE = 250;
+    public static final int A_STOP_NAME = 2;
+    public static final int A_STOP_LAT = 3;
+    public static final int A_STOP_LON = 4;
+    public static final int A_ARRIVAL_TIME = 8;
+    public static final int B_STOP_NAME = 23;
+    public static final int B_STOP_LAT = 24;
+    public static final int B_STOP_LON = 25;
+    public static final int B_ARRIVAL_TIME = 29;
+    public static final int MAX_WALKING_DISTANCE = 1500;
     public static final int NUMBER_OF_RESULTS = 5;
     public static final int DATABASE_INITIAL_SCHEMA = 1;
-    public static final Coordinates A_COORDINATES = new Coordinates("Pavillon André-Aisenstadt", 45.5010115, 73.6179101);
+    public static final Coordinates A_COORDINATES = new Coordinates("Pavillon André-Aisenstadt", 45.5010115, -73.6179101);
 
     private Spinner spinner;
     private DatePicker datePicker;
@@ -36,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
     private ArrayAdapter<CharSequence> spinnerAdapter;
     private SQLiteDatabase db;
     private List<Coordinates> coordinates;
+    private Calendar initialCalendar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,25 +82,21 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    //On a click on the search button
     public void onSearchButtonClick(View v) {
+        Coordinates aCoordinates = A_COORDINATES;
         Coordinates bCoordinates = coordinates.get(spinner.getSelectedItemPosition());
-        Log.d("test", bCoordinates.toString());
+        initialCalendar = new GregorianCalendar(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth(), timePicker.getHour(), timePicker.getMinute());
         //Querying the database
-        ArrayList<String> result;
-        result = dbQuery(bCoordinates);
-        if (!result.isEmpty()) {
+        ArrayList<Route> routeList;
+        routeList = dbQuery(aCoordinates, bCoordinates);
+        if (!routeList.isEmpty()) {
             //Launching the new Intent
-            Log.d("test", "result.size : " + result.size());
-            for (String s : result) {
-                Log.d("test", "result content: " + s);
-            }
+            Log.d("test", "result.size : " + routeList.size());
             Intent newIntent = new Intent(getApplicationContext(), SelectorActivity.class);
-            newIntent.putExtra("destination", spinner.getSelectedItem().toString());
-            newIntent.putExtra("year", datePicker.getYear());
-            newIntent.putExtra("month", datePicker.getMonth());
-            newIntent.putExtra("day", datePicker.getDayOfMonth());
-            //newIntent.putExtra("hour", timePicker.getHour());
-            //newIntent.putExtra("minute", timePicker.getMinute());
+            for (int i = 0, max = routeList.size(); i < max; i++) {
+                newIntent.putExtra("route" + i, routeList.get(i));
+            }
             startActivity(newIntent);
         } else {
             Toast.makeText(MainActivity.this, R.string.error, Toast.LENGTH_SHORT).show();
@@ -123,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //Sends the Query to the database and returns a Cursor
-    private ArrayList<String> dbQuery(Coordinates bCoordinates) {
+    private ArrayList<Route> dbQuery(Coordinates aCoordinates, Coordinates bCoordinates) {
         Cursor cursor = null;
         String query = "SELECT *"
                 + " from stops as A_prime" //arrêts à A'
@@ -132,36 +140,70 @@ public class MainActivity extends AppCompatActivity {
                 + " join stops as B_prime" //arrêtes à B'
                 + " join stop_times as B_prime_times on B_prime.stop_id = B_prime_times.stop_id" //temps aux arrêtes à B'
                 + " and A_prime_times.trip_id = B_prime_times.trip_id" //chemin de A' à B'
-                + " and time(A_prime_times.departure_time) < time(B_prime_times.arrival_time)" //d(A') < d(B')
+                + " and A_prime_times.stop_sequence < B_prime_times.stop_sequence" //A' est avant B'
                 + " WHERE"
-                //marche jusqu'à l'arrêt (5 km/h)
-                + " time(A_prime_times.departure_time) >= time(strftime('%s', 'now', 'localtime') + 1.37 * 51883.246273604 * (abs(A_prime.stop_lat - " + A_COORDINATES.getLatitude() + ") + abs(A_prime.stop_lon - " + A_COORDINATES.getLongitude() + ")), 'unixepoch')" //d(A) < d(A')
+                //marche jusqu'à l'arrêt (5 km/h) où AAAA-MM-JJ HH:MM:SS
+                + " time(A_prime_times.arrival_time) >= time(strftime('%s', 'now', 'localtime') + 1.37 * 51883.246273604 * (abs(A_prime.stop_lat - " + aCoordinates.getLatitude() + ") + abs(A_prime.stop_lon - " + aCoordinates.getLongitude() + ")), 'unixepoch')" //d(A) < d(A')
+                //filtre les heures de départ
+                //+ " and time(A_prime_times.departure_time) <= time(strftime('%s', 'now', '+2 hours', 'localtime'), 'unixepoch')"
+                //filtre les jours de la semaine
+                + " and A_prime_times.trip_id like"
+                    + " case strftime('%w', 'now', 'localtime')"
+                        + " when 0 then \'%\\_I\\_%\'" //dimanche
+                        + " when 6 then \'%\\_A\\_%\'" //samedi
+                        + " else \'%\\_S\\_%\'"   //semaine
+                    + "end"
                 //filtre les points A' et B'
-                + " and 51883.246273604 * (abs(A_prime.stop_lat - " + A_COORDINATES.getLatitude() + ") + abs(A_prime.stop_lon - " + A_COORDINATES.getLongitude() + ")) <= " + MAX_WALKING_DISTANCE
+                + " and 51883.246273604 * (abs(A_prime.stop_lat - " + aCoordinates.getLatitude() + ") + abs(A_prime.stop_lon - " + aCoordinates.getLongitude() + ")) <= " + MAX_WALKING_DISTANCE
                 + " and 51883.246273604 * (abs(" + bCoordinates.getLatitude() + " - B_prime.stop_lat) + abs(" + bCoordinates.getLongitude() + " - B_prime.stop_lon)) <= " + MAX_WALKING_DISTANCE
                 //distance maximale de marche
-                + " and 51883.246273604 * (abs(A_prime.stop_lat - " + A_COORDINATES.getLatitude() + ") + abs(A_prime.stop_lon - " + A_COORDINATES.getLongitude() + ") + abs(" + bCoordinates.getLatitude() + " - B_prime.stop_lat) + abs(" + bCoordinates.getLongitude() + " - B_prime.stop_lon)) <= " + MAX_WALKING_DISTANCE //d(A, A') + d(B', B)
+                + " and 51883.246273604 * (abs(A_prime.stop_lat - " + aCoordinates.getLatitude() + ") + abs(A_prime.stop_lon - " + aCoordinates.getLongitude() + ") + abs(" + bCoordinates.getLatitude() + " - B_prime.stop_lat) + abs(" + bCoordinates.getLongitude() + " - B_prime.stop_lon)) <= " + MAX_WALKING_DISTANCE //d(A, A') + d(B', B)
                 //minimise le temps d'arrivée t(B') + 1.37 * d(B', B)
                 + " order by time(B_prime_times.arrival_time) + 1.37 * 51883.246273604 * (abs (" + bCoordinates.getLatitude() + " - B_prime.stop_lat) + abs(" + bCoordinates.getLongitude() + " - B_prime.stop_lon))" //minimise t(B') + t(B)
                 + " limit " + NUMBER_OF_RESULTS + ";";
         Log.d("test", query);
-        ArrayList<String> result = new ArrayList<String>() {};
+        ArrayList<Route> routeList = new ArrayList<Route>() {};
         try {
-            cursor = db.rawQuery(query, null);
+            cursor = db.rawQuery(StringUtils.normalizeSpace(query), null);
             Log.d("test", "Query sent");
             Log.d("test", "Cursor rows count size: " + String.valueOf(cursor.getCount()));
             if (cursor.moveToFirst()) {
                 Log.d("Test", "Cursor could moveToFirst");
                 do {
-                    Log.d("Test", "Retreiving curcor data");
-                    String tempo = cursor.getString(0);
-                    result.add(tempo);
+                    //A
+                    String aStopName = cursor.getString(A_STOP_NAME);
+                    String aArrivalTime = cursor.getString(A_ARRIVAL_TIME);
+                    Double aLatitude = cursor.getDouble(A_STOP_LAT);
+                    Double aLongitude = cursor.getDouble(A_STOP_LON);
+                    //B
+                    String bStopName = cursor.getString(B_STOP_NAME);
+                    String bArrivalTime = cursor.getString(B_ARRIVAL_TIME);
+                    Double bLatitude = cursor.getDouble(B_STOP_LAT);
+                    Double bLongitude = cursor.getDouble(B_STOP_LON);
+                    //Object construction
+                    Route route = new Route(initialCalendar,
+                            aCoordinates.getLatitude(),
+                            aCoordinates.getLongitude(),
+                            aStopName,
+                            aArrivalTime,
+                            aLatitude,
+                            aLongitude,
+                            bStopName,
+                            bArrivalTime,
+                            bLatitude,
+                            bLongitude,
+                            bCoordinates.getLatitude(),
+                            bCoordinates.getLongitude()
+                    );
+                    routeList.add(route);
                 } while (cursor.moveToNext());
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         } finally {
             cursor.close();
         }
-        return result;
+        return routeList;
     }
 
     //Builds the SQL schema
@@ -206,10 +248,10 @@ public class MainActivity extends AppCompatActivity {
             }
         } else {
             Log.d("test", "The schema doesn't need an upgrade.");
-            Intent fillDataBaseIntent = new Intent(MainActivity.this, FillDataBaseService.class);
-            String[] tables = {"stops", "routes", "trips", "stop_times"};
-            fillDataBaseIntent.putExtra("tables", tables);
-            startService(fillDataBaseIntent);
+            //Intent fillDataBaseIntent = new Intent(MainActivity.this, FillDataBaseService.class);
+            //String[] tables = {"stops", "routes", "trips", "stop_times"};
+            //fillDataBaseIntent.putExtra("tables", tables);
+            //startService(fillDataBaseIntent);
         }
     }
 }

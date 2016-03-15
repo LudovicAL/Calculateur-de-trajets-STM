@@ -14,7 +14,7 @@ public class Coordinates {
 
     @Override
     public String toString() {
-        return name + " : " + latitude + ", " + longitude;
+        return name + " (" + latitude + ", " + longitude + ")";
     }
 
     public String getName() {

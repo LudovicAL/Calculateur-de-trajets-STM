@@ -8,42 +8,56 @@ import android.widget.TextView;
 
 public class DisplayActivity extends AppCompatActivity {
 
-    TextView textViewChoosenRouteId;
-    TextView textViewRequiredTime;
+    Route route;
     TextView textViewDepartureTime;
+    TextView textViewBoardingStopName;
+    TextView textViewTransitBoardingTime;
+    TextView textViewArrivalStopName;
+    TextView textViewTransitArrivalTime;
     TextView textViewArrivalTime;
-    TextView textViewWalkDistance;
-    TextView textViewCorrespondances;
+    TextView textViewTotalRequiredTime;
+    TextView textViewTotalWalkingDistance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display);
-        //Locate the textview
+        //Locate the TextViews
         locateTextViews();
-        //Retrieve the information passed by the previous activity and write it in the textviews
-        retrieveIntentInformationAndprepareTextViews();
+        //Retrieve the information passed by the previous activity
+        retrieveIntentInformation();
+        //Fill the TextViews;
+        fillTextViews();
     }
 
     //Retrieve the information passed with the Intent and prepares the textviews accordingly
-    public void retrieveIntentInformationAndprepareTextViews() {
-        Intent i = getIntent();
-        textViewChoosenRouteId.setText(getString(R.string.itineraryNumber) + " " + i.getIntExtra("choosenRouteId", 0));
-        textViewRequiredTime.setText(CommonTools.timeToString(i.getIntExtra("requiredTimeMinutes", 0), i.getIntExtra("requiredTimeHours", 0)));
-        textViewDepartureTime.setText(CommonTools.timeToString(i.getIntExtra("departureTimeMinutes", 0), i.getIntExtra("departureTimeHours", 0)));
-        textViewArrivalTime.setText(CommonTools.timeToString(i.getIntExtra("arrivalTimeMinutes", 0), i.getIntExtra("arrivalTimeHours", 0)));
-        textViewWalkDistance.setText(i.getFloatExtra("walkDistance", 0.0f) + " " + getString(R.string.meter));
-        textViewCorrespondances.setText("" + i.getIntExtra("correspondances", 0));
+    public void retrieveIntentInformation() {
+        Intent intent = getIntent();
+        route = (Route) intent.getSerializableExtra("route");
+    }
+
+    ////Fills the TextViews
+    public void fillTextViews(){
+        textViewDepartureTime.setText(route.getDepartureTime());
+        textViewBoardingStopName.setText(route.getaStopName());
+        textViewTransitBoardingTime.setText(route.getaArrivalTime());
+        textViewArrivalStopName.setText(route.getbStopName());
+        textViewTransitArrivalTime.setText(route.getbArrivalTime());
+        textViewArrivalTime.setText(route.getObjectiveTime());
+        textViewTotalRequiredTime.setText(route.getRequiredTime());
+        textViewTotalWalkingDistance.setText(route.getWalkDistance() + " m");
     }
 
     //Locates the required textview widgets
     public void locateTextViews() {
-        textViewChoosenRouteId = (TextView)findViewById(R.id.textViewChoosenRouteId);
-        textViewRequiredTime = (TextView)findViewById(R.id.textViewRequiredTime);
         textViewDepartureTime = (TextView)findViewById(R.id.textViewDepartureTime);
+        textViewBoardingStopName = (TextView)findViewById(R.id.textViewBoardingStopName);
+        textViewTransitBoardingTime = (TextView)findViewById(R.id.textViewTransitBoardingTime);
+        textViewArrivalStopName = (TextView)findViewById(R.id.textViewArrivalStopName);
+        textViewTransitArrivalTime = (TextView)findViewById(R.id.textViewTransitArrivalTime);
         textViewArrivalTime = (TextView)findViewById(R.id.textViewArrivalTime);
-        textViewWalkDistance = (TextView)findViewById(R.id.textViewWalkDistance);
-        textViewCorrespondances = (TextView)findViewById(R.id.textViewCorrespondances);
+        textViewTotalRequiredTime = (TextView)findViewById(R.id.textViewTotalRequiredTime);
+        textViewTotalWalkingDistance = (TextView)findViewById(R.id.textViewTotalWalkingDistance);
     }
 
     //Fired when users clicks the "Back" button
