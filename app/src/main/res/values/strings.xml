@@ -32,5 +32,6 @@
         <item>Aéroport Pierre-Elliott-Trudeau (45.4653214, -73.7400437)</item>
         <item>Station Honoré-Beaugrand (45.5986388, -73.539667)</item>
     </string-array>
+    <string name="walkDistance">Walk distance</string>
 
 </resources>

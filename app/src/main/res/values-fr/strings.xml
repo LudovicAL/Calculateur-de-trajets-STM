@@ -15,4 +15,12 @@
     <string name="selectDestination">Sélectionnez une destination</string>
     <string name="selectTime">Sélectionnez une heure</string>
     <string name="walkDistance">Distance de marche</string>
+    <string name="arrivalStopName">Nom d\'arrêt à l\'arrivée</string>
+    <string name="boardingStopName">Nom d\'arrêt à l\'embarquement</string>
+    <string name="distanceA">Distance de l\'arrêt</string>
+    <string name="distanceDestination">Distance de la destination</string>
+    <string name="totalRequiredTime">Temps total requis</string>
+    <string name="totalWalkingDistance">Distance de marche totale</string>
+    <string name="transitArrivalTime">Heure d\'arrivée du transit</string>
+    <string name="transitBoardingTime">Heure de débarquement du transit</string>
 </resources>

@@ -143,16 +143,14 @@ public class MainActivity extends AppCompatActivity {
                 + " and A_prime_times.stop_sequence < B_prime_times.stop_sequence" //A' est avant B'
                 + " WHERE"
                 //marche jusqu'à l'arrêt (5 km/h) où AAAA-MM-JJ HH:MM:SS
-                + " time(A_prime_times.arrival_time) >= time(strftime('%s', 'now', 'localtime') + 1.37 * 51883.246273604 * (abs(A_prime.stop_lat - " + aCoordinates.getLatitude() + ") + abs(A_prime.stop_lon - " + aCoordinates.getLongitude() + ")), 'unixepoch')" //d(A) < d(A')
-                //filtre les heures de départ
-                //+ " and time(A_prime_times.departure_time) <= time(strftime('%s', 'now', '+2 hours', 'localtime'), 'unixepoch')"
+                + " time(A_prime_times.arrival_time) >= time(strftime('%s', '2016-03-14 " + CommonTools.addZero(initialCalendar.get(Calendar.HOUR)) + ":" + CommonTools.addZero(initialCalendar.get(Calendar.MINUTE)) + ":00', 'localtime') + 1.37 * 51883.246273604 * (abs(A_prime.stop_lat - " + aCoordinates.getLatitude() + ") + abs(A_prime.stop_lon - " + aCoordinates.getLongitude() + ")), 'unixepoch')" //d(A) < d(A')
                 //filtre les jours de la semaine
                 + " and A_prime_times.trip_id like"
                     + " case strftime('%w', 'now', 'localtime')"
-                        + " when 0 then \'%\\_I\\_%\'" //dimanche
-                        + " when 6 then \'%\\_A\\_%\'" //samedi
-                        + " else \'%\\_S\\_%\'"   //semaine
-                    + "end"
+                        + " when 0 then '%I%'" //dimanche
+                        + " when 6 then '%A%'" //samedi
+                        + " else '%S%'"   //semaine
+                    + " end"
                 //filtre les points A' et B'
                 + " and 51883.246273604 * (abs(A_prime.stop_lat - " + aCoordinates.getLatitude() + ") + abs(A_prime.stop_lon - " + aCoordinates.getLongitude() + ")) <= " + MAX_WALKING_DISTANCE
                 + " and 51883.246273604 * (abs(" + bCoordinates.getLatitude() + " - B_prime.stop_lat) + abs(" + bCoordinates.getLongitude() + " - B_prime.stop_lon)) <= " + MAX_WALKING_DISTANCE
