@@ -1,11 +1,9 @@
 package com.ludovical.tp1stm;
 
-public class CommonTools {
-    //Converts a date value to a string
-    public static String dateToString(int day, int month, int year) {
-        return addZero(day) + "/" + addZero(month) + "/" + year;
-    }
+import android.widget.DatePicker;
+import android.widget.TimePicker;
 
+public class CommonTools {
     //Converts a time value to a string
     public static String timeToString(int hour, int minute) {
         return addZero(hour) + "h" + addZero(minute);
@@ -23,6 +21,21 @@ public class CommonTools {
         } else {
             return "" + i;
         }
+    }
+
+    public static String pickersToString (DatePicker datePicker, TimePicker timePicker) {
+        String time = "";
+        time += Integer.toString(datePicker.getYear());
+        time += "-";
+        time += addZero(datePicker.getMonth());
+        time += "-";
+        time += addZero(datePicker.getDayOfMonth());
+        time += " ";
+        time += addZero(timePicker.getHour());
+        time += ":";
+        time += addZero(timePicker.getMinute());
+        time += ":00";
+        return time;
     }
 
     //Converts Latitude and Longitude distance to meters

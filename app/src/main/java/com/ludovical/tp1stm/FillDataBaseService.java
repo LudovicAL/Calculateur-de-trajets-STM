@@ -60,8 +60,6 @@ public class FillDataBaseService extends IntentService {
                                 .build());
                         CSVParser parser = new CSVParser(new InputStreamReader(zis), CSVFormat.RFC4180.withHeader());
                         for (CSVRecord row : parser) {
-                            // TODO: ...
-                            //if ((row.getRecordNumber() - 2) % BATCH_SIZE == 0)
                             ContentValues values = new ContentValues();
                             for (Map.Entry<String, String> e : row.toMap().entrySet()) {
                                 if (e.getValue().isEmpty()) { // gère les valeurs vides en CSV

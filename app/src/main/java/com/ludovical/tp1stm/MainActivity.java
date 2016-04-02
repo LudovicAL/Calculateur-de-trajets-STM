@@ -58,8 +58,8 @@ public class MainActivity extends AppCompatActivity {
         locateAndFillSpinner();
         //Locating and setting the date picker
         locateAndSetDatePicker();
-        //Locating the time picker
-        timePicker = (TimePicker) findViewById(R.id.timePicker);
+        //Locating and setting the time picker
+        locateAndSetTimePicker();
         //Creating the database
         db = openOrCreateDatabase("stm_gtfs", MODE_PRIVATE, null);
         //Preparing the Schema
@@ -122,6 +122,12 @@ public class MainActivity extends AppCompatActivity {
         datePicker.setMinDate(new Date().getTime());
     }
 
+    //Locates the time picker and sets it to a 24h format
+    private void locateAndSetTimePicker() {
+        timePicker = (TimePicker) findViewById(R.id.timePicker);
+        timePicker.setIs24HourView(true);
+    }
+
     //Locates the spinner and fills it with predefined destinations values
     private void locateAndFillSpinner() {
         spinner = (Spinner) findViewById(R.id.spinnerDestinations);
@@ -132,33 +138,33 @@ public class MainActivity extends AppCompatActivity {
 
     //Sends the Query to the database and returns a Cursor
     private ArrayList<Route> dbQuery(Coordinates aCoordinates, Coordinates bCoordinates) {
+        String chosenTime = CommonTools.pickersToString(datePicker, timePicker);      //Pour remplacer le 'now' dans la requête
         Cursor cursor = null;
-        String query = "SELECT *"
-                + " from stops as A_prime" //arrêts à A'
-                + " join stop_times as A_prime_times on A_prime.stop_id = A_prime_times.stop_id" //temps aux arrêtes de A'
-                + " join trips as A_prime_B_prime_trips on A_prime_times.trip_id = A_prime_B_prime_trips.trip_id" //chemins de A' à B'
-                + " join stops as B_prime" //arrêtes à B'
-                + " join stop_times as B_prime_times on B_prime.stop_id = B_prime_times.stop_id" //temps aux arrêtes à B'
-                + " and A_prime_times.trip_id = B_prime_times.trip_id" //chemin de A' à B'
-                + " and A_prime_times.stop_sequence < B_prime_times.stop_sequence" //A' est avant B'
-                + " WHERE"
-                //marche jusqu'à l'arrêt (5 km/h) où AAAA-MM-JJ HH:MM:SS
-                + " time(A_prime_times.arrival_time) >= time(strftime('%s', '2016-03-14 " + CommonTools.addZero(initialCalendar.get(Calendar.HOUR)) + ":" + CommonTools.addZero(initialCalendar.get(Calendar.MINUTE)) + ":00', 'localtime') + 1.37 * 51883.246273604 * (abs(A_prime.stop_lat - " + aCoordinates.getLatitude() + ") + abs(A_prime.stop_lon - " + aCoordinates.getLongitude() + ")), 'unixepoch')" //d(A) < d(A')
-                //filtre les jours de la semaine
-                + " and A_prime_times.trip_id like"
-                    + " case strftime('%w', 'now', 'localtime')"
-                        + " when 0 then '%I%'" //dimanche
-                        + " when 6 then '%A%'" //samedi
-                        + " else '%S%'"   //semaine
-                    + " end"
-                //filtre les points A' et B'
-                + " and 51883.246273604 * (abs(A_prime.stop_lat - " + aCoordinates.getLatitude() + ") + abs(A_prime.stop_lon - " + aCoordinates.getLongitude() + ")) <= " + MAX_WALKING_DISTANCE
-                + " and 51883.246273604 * (abs(" + bCoordinates.getLatitude() + " - B_prime.stop_lat) + abs(" + bCoordinates.getLongitude() + " - B_prime.stop_lon)) <= " + MAX_WALKING_DISTANCE
-                //distance maximale de marche
-                + " and 51883.246273604 * (abs(A_prime.stop_lat - " + aCoordinates.getLatitude() + ") + abs(A_prime.stop_lon - " + aCoordinates.getLongitude() + ") + abs(" + bCoordinates.getLatitude() + " - B_prime.stop_lat) + abs(" + bCoordinates.getLongitude() + " - B_prime.stop_lon)) <= " + MAX_WALKING_DISTANCE //d(A, A') + d(B', B)
-                //minimise le temps d'arrivée t(B') + 1.37 * d(B', B)
-                + " order by time(B_prime_times.arrival_time) + 1.37 * 51883.246273604 * (abs (" + bCoordinates.getLatitude() + " - B_prime.stop_lat) + abs(" + bCoordinates.getLongitude() + " - B_prime.stop_lon))" //minimise t(B') + t(B)
-                + " limit " + NUMBER_OF_RESULTS + ";";
+        String query = "SELECT *," +
+                " (select group_concat(shape_pt_lat || ',' || shape_pt_lon, ';') from shapes" +
+                    " where A_prime_B_prime_trips.shape_id = shapes.shape_id" +
+                    " group by shape_id" +
+                    " order by shape_pt_sequence)" +
+                " from stops as A_prime" +
+                " join stop_times as A_prime_times on A_prime.stop_id = A_prime_times.stop_id" +
+                " join trips as A_prime_B_prime_trips on A_prime_times.trip_id = A_prime_B_prime_trips.trip_id" +
+                " join stops as B_prime" +
+                " join stop_times as B_prime_times on B_prime.stop_id = B_prime_times.stop_id" +
+                    " and A_prime_times.trip_id = B_prime_times.trip_id" +
+                    " and A_prime_times.stop_sequence < B_prime_times.stop_sequence" +
+                " WHERE" +
+                " service_id in (select service_id from calendar_dates where calendar_dates.date = strftime('%Y%m%d', :departure_date))" +
+                    " and 3600 * substr(A_prime_times.arrival_time, 0, 3) + strftime('%s', '00' || substr(A_prime_times.arrival_time, 3)) >= strftime('%s', :departure_time) + 1.37 * 98194.860939613 * (abs(A_prime.stop_lat - " + aCoordinates.getLatitude() + ") + abs(A_prime.stop_lon - " + aCoordinates.getLongitude() + "))" +
+                    " and 98194.860939613 * (abs(A_prime.stop_lat - " + aCoordinates.getLatitude() + ") + abs(A_prime.stop_lon - " + aCoordinates.getLongitude() + ")) <= " + MAX_WALKING_DISTANCE +
+                    " and 98194.860939613 * (abs(" + bCoordinates.getLatitude() + " - B_prime.stop_lat) + abs(" + bCoordinates.getLongitude() + " - B_prime.stop_lon)) <= " + MAX_WALKING_DISTANCE +
+                    " and 98194.860939613 * (abs(A_prime.stop_lat - " + aCoordinates.getLatitude() + ") + abs(A_prime.stop_lon - " + aCoordinates.getLongitude() + ") + abs(" + bCoordinates.getLatitude() + " - B_prime.stop_lat) + abs(" + bCoordinates.getLongitude() + " - B_prime.stop_lon)) <= " + MAX_WALKING_DISTANCE +
+                " group by A_prime_B_prime_trips.trip_id" +
+                " order by" +
+                " 3600 * substr(B_prime_times.arrival_time, 0, 3) + strftime('%s', '00' || substr(B_prime_times.arrival_time, 3))" +
+                " + 1.37 * 98194.860939613 * (abs(" + bCoordinates.getLatitude() + " - B_prime.stop_lat) + abs(" + bCoordinates.getLongitude() + " - B_prime.stop_lon))," +
+                " min(3600 * substr(B_prime_times.arrival_time, 0, 3) + strftime('%s', '00' || substr(B_prime_times.arrival_time, 3))" +
+                " + 1.37 * 98194.860939613 * (abs(" + bCoordinates.getLatitude() + " - B_prime.stop_lat) + abs(" + bCoordinates.getLongitude() + " - B_prime.stop_lon)))" +
+                " limit " + NUMBER_OF_RESULTS +";";
         Log.d("test", query);
         ArrayList<Route> routeList = new ArrayList<Route>() {};
         try {

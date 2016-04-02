@@ -23,4 +23,13 @@
     <string name="totalWalkingDistance">Distance de marche totale</string>
     <string name="transitArrivalTime">Heure d\'arrivée du transit</string>
     <string name="transitBoardingTime">Heure de débarquement du transit</string>
+
+    <string-array name="destinations_values">
+        <item>Pub McCarold (45.4961719, -73.6247091)</item>
+        <item>Centre Bell (45.4960704, -73.571504)</item>
+        <item>Club Soda (45.5100687, -73.5654437)</item>
+        <item>Station Angrignon (45.4445232, -73.6039207)</item>
+        <item>Aéroport Pierre-Elliott-Trudeau (45.4653214, -73.7400437)</item>
+        <item>Station Honoré-Beaugrand (45.5986388, -73.539667)</item>
+    </string-array>
 </resources>
