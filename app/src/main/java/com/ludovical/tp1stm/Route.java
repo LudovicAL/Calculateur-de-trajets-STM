@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 public class Route implements Serializable {
+    private String tripHeadSign;
     private Calendar requiredCalendar;
     private Calendar departureCalendar;
     private Calendar initialCalendar;
@@ -25,7 +26,7 @@ public class Route implements Serializable {
     private int walkDistance;
     private int correspondances;
 
-    public Route(Calendar initialCalendar, double initialLatitude, double initialLongitude, String aStopName, String aArrivalTime, double aLatitude, double aLongitude, String bStopName, String bArrivalTime, double bLatitude, double bLongitude, double objectiveLatitude, double objectiveLongitude) {
+    public Route(String tripHeadSign, Calendar initialCalendar, double initialLatitude, double initialLongitude, String aStopName, String aArrivalTime, double aLatitude, double aLongitude, String bStopName, String bArrivalTime, double bLatitude, double bLongitude, double objectiveLatitude, double objectiveLongitude) {
         //INITIAL POSITION
         this.initialCalendar = initialCalendar;
         this.initialLatitude = initialLatitude;
@@ -55,6 +56,7 @@ public class Route implements Serializable {
         calculateObjectiveCalendar();
 
         //OTHERS OPERATIONS
+        this.tripHeadSign = tripHeadSign;
         calculateDepartureCalendar();
         this.walkDistance = calculateWalkDistance(initialLatitude, initialLongitude, aLatitude, aLongitude, bLatitude, bLongitude, objectiveLatitude, objectiveLongitude);     //À CORRIGER
         calculateRequiredCalendar();
@@ -142,6 +144,14 @@ public class Route implements Serializable {
     //Automatic Getters
     public Calendar getInitialCalendar() {
         return initialCalendar;
+    }
+
+    public String getTripHeadSign() {
+        return tripHeadSign;
+    }
+
+    public void setTripHeadSign(String tripHeadSign) {
+        this.tripHeadSign = tripHeadSign;
     }
 
     public Calendar getRequiredCalendar() {

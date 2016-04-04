@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     public static final int A_STOP_LAT = 3;
     public static final int A_STOP_LON = 4;
     public static final int A_ARRIVAL_TIME = 8;
+    public static final int TRIP_HEAD_SIGN = 15;
     public static final int B_STOP_NAME = 23;
     public static final int B_STOP_LAT = 24;
     public static final int B_STOP_LON = 25;
@@ -138,33 +139,33 @@ public class MainActivity extends AppCompatActivity {
 
     //Sends the Query to the database and returns a Cursor
     private ArrayList<Route> dbQuery(Coordinates aCoordinates, Coordinates bCoordinates) {
-        String chosenTime = CommonTools.pickersToString(datePicker, timePicker);      //Pour remplacer le 'now' dans la requête
         Cursor cursor = null;
-        String query = "SELECT *," +
+        String query = " SELECT *," +
                 " (select group_concat(shape_pt_lat || ',' || shape_pt_lon, ';') from shapes" +
-                    " where A_prime_B_prime_trips.shape_id = shapes.shape_id" +
-                    " group by shape_id" +
-                    " order by shape_pt_sequence)" +
+                " where A_prime_B_prime_trips.shape_id = shapes.shape_id" +
+                " group by shape_id" +
+                " order by shape_pt_sequence)" +
                 " from stops as A_prime" +
                 " join stop_times as A_prime_times on A_prime.stop_id = A_prime_times.stop_id" +
                 " join trips as A_prime_B_prime_trips on A_prime_times.trip_id = A_prime_B_prime_trips.trip_id" +
                 " join stops as B_prime" +
                 " join stop_times as B_prime_times on B_prime.stop_id = B_prime_times.stop_id" +
-                    " and A_prime_times.trip_id = B_prime_times.trip_id" +
-                    " and A_prime_times.stop_sequence < B_prime_times.stop_sequence" +
+                " and A_prime_times.trip_id = B_prime_times.trip_id" +
+                " and A_prime_times.stop_sequence < B_prime_times.stop_sequence" +
                 " WHERE" +
-                " service_id in (select service_id from calendar_dates where calendar_dates.date = strftime('%Y%m%d', :departure_date))" +
-                    " and 3600 * substr(A_prime_times.arrival_time, 0, 3) + strftime('%s', '00' || substr(A_prime_times.arrival_time, 3)) >= strftime('%s', :departure_time) + 1.37 * 98194.860939613 * (abs(A_prime.stop_lat - " + aCoordinates.getLatitude() + ") + abs(A_prime.stop_lon - " + aCoordinates.getLongitude() + "))" +
-                    " and 98194.860939613 * (abs(A_prime.stop_lat - " + aCoordinates.getLatitude() + ") + abs(A_prime.stop_lon - " + aCoordinates.getLongitude() + ")) <= " + MAX_WALKING_DISTANCE +
-                    " and 98194.860939613 * (abs(" + bCoordinates.getLatitude() + " - B_prime.stop_lat) + abs(" + bCoordinates.getLongitude() + " - B_prime.stop_lon)) <= " + MAX_WALKING_DISTANCE +
-                    " and 98194.860939613 * (abs(A_prime.stop_lat - " + aCoordinates.getLatitude() + ") + abs(A_prime.stop_lon - " + aCoordinates.getLongitude() + ") + abs(" + bCoordinates.getLatitude() + " - B_prime.stop_lat) + abs(" + bCoordinates.getLongitude() + " - B_prime.stop_lon)) <= " + MAX_WALKING_DISTANCE +
+                " service_id in (select service_id from calendar_dates where calendar_dates.date = strftime('%Y%m%d', date('" + CommonTools.datePickerToString(datePicker) + "', '" + CommonTools.timePickerToString(timePicker) + "')))" +
+                " and 3600 * substr(A_prime_times.arrival_time, 0, 3) + strftime('%s', '00' || substr(A_prime_times.arrival_time, 3))" +
+                " >= strftime('%s', time('" + CommonTools.datePickerToString(datePicker) + "', '" + CommonTools.timePickerToString(timePicker) + "')) + 1.37 * 98194.860939613 * (abs(A_prime.stop_lat - " + aCoordinates.getLatitude() + ") + abs(A_prime.stop_lon - " + aCoordinates.getLongitude() + "))" +
+                " and 98194.860939613 * (abs(A_prime.stop_lat - " + aCoordinates.getLatitude() + ") + abs(A_prime.stop_lon - " + aCoordinates.getLongitude() + ")) <= " + MAX_WALKING_DISTANCE +
+                " and 98194.860939613 * (abs(" + bCoordinates.getLatitude() + " - B_prime.stop_lat) + abs(" + bCoordinates.getLongitude() + " - B_prime.stop_lon)) <= " + MAX_WALKING_DISTANCE +
+                " and 98194.860939613 * (abs(A_prime.stop_lat - " + aCoordinates.getLatitude() + ") + abs(A_prime.stop_lon - " + aCoordinates.getLongitude() + ") + abs(" + bCoordinates.getLatitude() + " - B_prime.stop_lat) + abs(" + bCoordinates.getLongitude() + " - B_prime.stop_lon)) <= " + MAX_WALKING_DISTANCE +
                 " group by A_prime_B_prime_trips.trip_id" +
                 " order by" +
                 " 3600 * substr(B_prime_times.arrival_time, 0, 3) + strftime('%s', '00' || substr(B_prime_times.arrival_time, 3))" +
                 " + 1.37 * 98194.860939613 * (abs(" + bCoordinates.getLatitude() + " - B_prime.stop_lat) + abs(" + bCoordinates.getLongitude() + " - B_prime.stop_lon))," +
                 " min(3600 * substr(B_prime_times.arrival_time, 0, 3) + strftime('%s', '00' || substr(B_prime_times.arrival_time, 3))" +
                 " + 1.37 * 98194.860939613 * (abs(" + bCoordinates.getLatitude() + " - B_prime.stop_lat) + abs(" + bCoordinates.getLongitude() + " - B_prime.stop_lon)))" +
-                " limit " + NUMBER_OF_RESULTS +";";
+                " limit " + NUMBER_OF_RESULTS + ";";
         Log.d("test", query);
         ArrayList<Route> routeList = new ArrayList<Route>() {};
         try {
@@ -174,6 +175,8 @@ public class MainActivity extends AppCompatActivity {
             if (cursor.moveToFirst()) {
                 Log.d("Test", "Cursor could moveToFirst");
                 do {
+                    //Line number
+                    String tripHeadSign = cursor.getString(TRIP_HEAD_SIGN);
                     //A
                     String aStopName = cursor.getString(A_STOP_NAME);
                     String aArrivalTime = cursor.getString(A_ARRIVAL_TIME);
@@ -185,7 +188,8 @@ public class MainActivity extends AppCompatActivity {
                     Double bLatitude = cursor.getDouble(B_STOP_LAT);
                     Double bLongitude = cursor.getDouble(B_STOP_LON);
                     //Object construction
-                    Route route = new Route(initialCalendar,
+                    Route route = new Route(tripHeadSign,
+                            initialCalendar,
                             aCoordinates.getLatitude(),
                             aCoordinates.getLongitude(),
                             aStopName,
@@ -200,6 +204,17 @@ public class MainActivity extends AppCompatActivity {
                             bCoordinates.getLongitude()
                     );
                     routeList.add(route);
+
+                    Log.d("test", "initialCalendar = " + initialCalendar.toString());
+                    Log.d("test", "aArrivalTime = " + aArrivalTime);
+                    Log.d("test", "bArrivalTime = " + bArrivalTime);
+                    Log.d("test", "route.getInitialTime() = " + route.getInitialTime());
+                    Log.d("test", "route.getInitialCalendar() = " + route.getInitialCalendar());
+                    Log.d("test", "route.getaArrivalTime() = " + route.getaArrivalTime());
+                    Log.d("test", "route.getaArrivalCalendar() = " + route.getaArrivalCalendar());
+                    Log.d("test", "route.getbArrivalTime() = " + route.getbArrivalTime());
+                    Log.d("test", "route.getbArrivalCalendar() = " + route.getbArrivalCalendar());
+
                 } while (cursor.moveToNext());
             }
         } catch (Exception e) {
@@ -227,7 +242,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onCommit() {
                         Log.d("test", "The schema was successfully created.");
                         Intent fillDatabaseIntent = new Intent(MainActivity.this, FillDataBaseService.class);
-                        String[] tables = {"stops", "routes", "trips", "stop_times"};
+                        String[] tables = {"stops", "routes", "shapes", "trips", "calendar_dates", "stop_times"};
                         fillDatabaseIntent.putExtra("tables", tables);
                         startService(fillDatabaseIntent);
                     }

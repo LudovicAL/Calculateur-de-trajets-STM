@@ -46,9 +46,9 @@
             android:layout_height="wrap_content"
             android:id="@+id/datePicker"
             android:layout_gravity="center_horizontal"
-            android:calendarViewShown="false"
+            android:textAlignment="gravity"
             android:datePickerMode="spinner"
-            android:textAlignment="gravity" />
+            android:calendarViewShown="false" />
 
         <TextView
             android:layout_width="match_parent"

@@ -33,5 +33,9 @@
         <item>Station Honoré-Beaugrand (45.5986388, -73.539667)</item>
     </string-array>
     <string name="walkDistance">Walk distance</string>
+    <string name="splashTitle">STM Pathfinder</string>
+    <string name="splashDescription">Get almost any place in Montreal using the city\'s intricate public transportation network.</string>
 
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

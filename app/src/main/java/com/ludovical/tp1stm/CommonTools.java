@@ -38,6 +38,25 @@ public class CommonTools {
         return time;
     }
 
+    public static String datePickerToString(DatePicker datePicker) {
+        String date = "";
+        date += Integer.toString(datePicker.getYear());
+        date += "-";
+        date += addZero(datePicker.getMonth());
+        date += "-";
+        date += addZero(datePicker.getDayOfMonth());
+        return date;
+    }
+
+    public static String timePickerToString(TimePicker timePicker) {
+        String time = "";
+        time += addZero(timePicker.getHour());
+        time += ":";
+        time += addZero(timePicker.getMinute());
+        time += ":00";
+        return time;
+    }
+
     //Converts Latitude and Longitude distance to meters
     public static int coordinatesToMeters(double aLatitude, double aLongitude, double bLatitude, double bLongitude) {
         double R = 6378.137; // Radius of earth in KM
