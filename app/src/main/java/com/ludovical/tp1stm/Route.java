@@ -26,7 +26,27 @@ public class Route implements Serializable {
     private int walkDistance;
     private int correspondances;
 
-    public Route(String tripHeadSign, Calendar initialCalendar, double initialLatitude, double initialLongitude, String aStopName, String aArrivalTime, double aLatitude, double aLongitude, String bStopName, String bArrivalTime, double bLatitude, double bLongitude, double objectiveLatitude, double objectiveLongitude) {
+    public Route(String tripHeadSign,
+                 //INITIAL POSITION
+                 Calendar initialCalendar,
+                 double initialLatitude,
+                 double initialLongitude,
+
+                 //A POSITION
+                 String aStopName,
+                 String aArrivalTime,
+                 double aLatitude,
+                 double aLongitude,
+
+                 //B POSITION
+                 String bStopName,
+                 String bArrivalTime,
+                 double bLatitude,
+                 double bLongitude,
+
+                 //OBJECTIVE POSITION
+                 double objectiveLatitude,
+                 double objectiveLongitude) {
         //INITIAL POSITION
         this.initialCalendar = initialCalendar;
         this.initialLatitude = initialLatitude;
@@ -106,10 +126,7 @@ public class Route implements Serializable {
 
     @Override
     public String toString() {
-        return "Required Time: " + getRequiredTime() + "\n"
-        + "Boarding stop name: " + aStopName + "\n"
-        + "Arrival stop name: " + bStopName + "\n"
-        + "Total walking distance: " + walkDistance + "\n";
+        return R.string.line + ": " + tripHeadSign + "\n" + R.string.requiredTime + ": " + getRequiredTime();
     }
 
     //Custom Getters

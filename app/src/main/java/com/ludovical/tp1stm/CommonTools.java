@@ -3,6 +3,9 @@ package com.ludovical.tp1stm;
 import android.widget.DatePicker;
 import android.widget.TimePicker;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 public class CommonTools {
     //Converts a time value to a string
     public static String timeToString(int hour, int minute) {
@@ -23,38 +26,22 @@ public class CommonTools {
         }
     }
 
-    public static String pickersToString (DatePicker datePicker, TimePicker timePicker) {
-        String time = "";
-        time += Integer.toString(datePicker.getYear());
-        time += "-";
-        time += addZero(datePicker.getMonth());
-        time += "-";
-        time += addZero(datePicker.getDayOfMonth());
-        time += " ";
-        time += addZero(timePicker.getHour());
-        time += ":";
-        time += addZero(timePicker.getMinute());
-        time += ":00";
-        return time;
+    public static String calendarToDateString(Calendar calendar) {
+        if (calendar != null) {
+            SimpleDateFormat myDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            return myDateFormat.format(calendar.getTime());
+        } else {
+            return null;
+        }
     }
 
-    public static String datePickerToString(DatePicker datePicker) {
-        String date = "";
-        date += Integer.toString(datePicker.getYear());
-        date += "-";
-        date += addZero(datePicker.getMonth());
-        date += "-";
-        date += addZero(datePicker.getDayOfMonth());
-        return date;
-    }
-
-    public static String timePickerToString(TimePicker timePicker) {
-        String time = "";
-        time += addZero(timePicker.getHour());
-        time += ":";
-        time += addZero(timePicker.getMinute());
-        time += ":00";
-        return time;
+    public static String calendarToTimeString(Calendar calendar) {
+        if (calendar != null) {
+            SimpleDateFormat myTimeFormat = new SimpleDateFormat("HH:mm:ss");
+            return myTimeFormat.format(calendar.getTime());
+        } else {
+            return null;
+        }
     }
 
     //Converts Latitude and Longitude distance to meters

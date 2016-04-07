@@ -11,9 +11,9 @@
     <string name="meter">mètre(s)</string>
     <string name="requiredTime">Temps requis</string>
     <string name="search">Chercher</string>
-    <string name="selectDate">Selectionnez une date</string>
-    <string name="selectDestination">Sélectionnez une destination</string>
-    <string name="selectTime">Sélectionnez une heure</string>
+    <string name="selectDate">2 - Selectionnez une date</string>
+    <string name="selectDestination">1 - Sélectionnez une destination</string>
+    <string name="selectTime">3 - Sélectionnez une heure</string>
     <string name="walkDistance">Distance de marche</string>
     <string name="arrivalStopName">Nom d\'arrêt à l\'arrivée</string>
     <string name="boardingStopName">Nom d\'arrêt à l\'embarquement</string>
@@ -32,4 +32,12 @@
         <item>Aéroport Pierre-Elliott-Trudeau (45.4653214, -73.7400437)</item>
         <item>Station Honoré-Beaugrand (45.5986388, -73.539667)</item>
     </string-array>
+    <string name="pleaseWait">L\'applcation cherche déjà un itinéraire. Ne pouvez-vous pas attendre!?</string>
+    <string name="querySent">L\'application débute sa recherche. Veuillez patienter.</string>
+    <string name="splashDescription">Aller presque n\'importe où à Montréal grâce au réseau de transport en commun de la ville.</string>
+    <string name="splashTitle">STM Orienteur</string>
+    <string name="line">Ligne</string>
+    <string name="launchSearch">4 - Lancez la recherche</string>
+    <string name="selectDateButton">Cliquez ici pour sélectionner une date</string>
+    <string name="selectTimeButton">Cliquez ici pour sélectionner une heure</string>
 </resources>
