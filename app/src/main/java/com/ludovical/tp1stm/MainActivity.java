@@ -40,7 +40,6 @@ public class MainActivity extends AppCompatActivity {
     public static final int B_ARRIVAL_TIME = 29;
     public static final int MAX_WALKING_DISTANCE = 1500;
     public static final int NUMBER_OF_RESULTS = 5;
-    public static final int DATABASE_INITIAL_SCHEMA = 1;
     public static final Coordinates INITIAL_COORDINATES = new Coordinates("Pavillon André-Aisenstadt", 45.5010115, -73.6179101);
 
     private Spinner spinner;
@@ -268,50 +267,41 @@ public class MainActivity extends AppCompatActivity {
 
     //Builds the SQL schema
     private void prepareSchema() {
-        if (db.needUpgrade(DATABASE_INITIAL_SCHEMA)) {
-            try {
-                InputStream schemaStream = getResources().openRawResource(R.raw.schema);
-                String schema = IOUtils.toString(schemaStream);
-                IOUtils.closeQuietly(schemaStream);
-                db.beginTransactionWithListener(new SQLiteTransactionListener() {
-                    @Override
-                    public void onBegin() {
+        try {
+            InputStream schemaStream = getResources().openRawResource(R.raw.schema);
+            String schema = IOUtils.toString(schemaStream);
+            IOUtils.closeQuietly(schemaStream);
+            db.beginTransactionWithListener(new SQLiteTransactionListener() {
+                @Override
+                public void onBegin() {
 
-                    }
-
-                    @Override
-                    public void onCommit() {
-                        Log.d("test", "The schema was successfully created.");
-                        Intent fillDatabaseIntent = new Intent(MainActivity.this, FillDataBaseService.class);
-                        String[] tables = {"stops", "feed_info", "routes", "shapes", "trips", "calendar_dates", "stop_times"};
-                        fillDatabaseIntent.putExtra("tables", tables);
-                        startService(fillDatabaseIntent);
-                    }
-
-                    @Override
-                    public void onRollback() {
-                        Log.d("", "The schema creation failed.");
-                    }
-                });
-                for (String statement : schema.split(";")) {
-                    statement = StringUtils.normalizeSpace(statement.replaceAll("[\r\n]", ""));
-                    if (!statement.isEmpty()) {
-                        db.execSQL(statement);
-                    }
                 }
-                db.setVersion(DATABASE_INITIAL_SCHEMA);
-                db.setTransactionSuccessful();
-                db.endTransaction();
-                Log.d("", db.toString());
-            } catch (IOException e) {
-                e.printStackTrace();
+
+                @Override
+                public void onCommit() {
+                    Log.d("test", "The schema was successfully created.");
+                    Intent fillDatabaseIntent = new Intent(MainActivity.this, FillDataBaseService.class);
+                    String[] tables = {"stops", "feed_info", "routes", "shapes", "trips", "calendar_dates", "stop_times"};
+                    fillDatabaseIntent.putExtra("tables", tables);
+                    startService(fillDatabaseIntent);
+                }
+
+                @Override
+                public void onRollback() {
+                    Log.d("", "The schema creation failed.");
+                }
+            });
+            for (String statement : schema.split(";")) {
+                statement = StringUtils.normalizeSpace(statement.replaceAll("[\r\n]", ""));
+                if (!statement.isEmpty()) {
+                    db.execSQL(statement);
+                }
             }
-        } else {
-            Log.d("test", "The schema doesn't need an upgrade.");
-            //Intent fillDataBaseIntent = new Intent(MainActivity.this, FillDataBaseService.class);
-            //String[] tables = {"stops", "routes", "trips", "stop_times"};
-            //fillDataBaseIntent.putExtra("tables", tables);
-            //startService(fillDataBaseIntent);
+            db.setTransactionSuccessful();
+            db.endTransaction();
+            Log.d("", db.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
