@@ -11,9 +11,8 @@
     <string name="meter">mètre(s)</string>
     <string name="requiredTime">Temps requis</string>
     <string name="search">Chercher</string>
-    <string name="selectDate">2 - Selectionnez une date</string>
-    <string name="selectDestination">1 - Sélectionnez une destination</string>
-    <string name="selectTime">3 - Sélectionnez une heure</string>
+    <string name="selectDate">3 - Selectionnez une date</string>
+    <string name="selectTime">4 - Sélectionnez une heure</string>
     <string name="walkDistance">Distance de marche</string>
     <string name="arrivalStopName">Nom d\'arrêt à l\'arrivée</string>
     <string name="boardingStopName">Nom d\'arrêt à l\'embarquement</string>
@@ -37,10 +36,17 @@
     <string name="splashDescription">Aller presque n\'importe où à Montréal grâce au réseau de transport en commun de la ville.</string>
     <string name="splashTitle">STM Orienteur</string>
     <string name="line">Ligne</string>
-    <string name="launchSearch">4 - Lancez la recherche</string>
+    <string name="launchSearch">5 - Lancez la recherche</string>
     <string name="selectDateButton">Cliquez ici pour sélectionner une date</string>
     <string name="selectTimeButton">Cliquez ici pour sélectionner une heure</string>
     <string name="changeRegistered">Changement enregistré</string>
     <string name="initialPosition">Position initiale</string>
     <string name="objectivePosition">Position de l\'objectif</string>
+    <string name="instruction">Pesez longuement quelque part sur la carte pour bouger le marqueur.</string>
+    <string name="instructionInitialPosition">Veuillez marquer votre position initiale.</string>
+    <string name="instructionObjectivePosition">Veuillez marquer votre destination.</string>
+    <string name="selectInitialPosition">1 - Marquez votre position initiale</string>
+    <string name="selectInitialPositionButton">Cliquez ici pour marquer votre position initiale</string>
+    <string name="selectObjectivePosition">2 - Marquez votre destination</string>
+    <string name="selectObjectivePositionButton">Cliquez ici pour marquer votre destination</string>
 </resources>

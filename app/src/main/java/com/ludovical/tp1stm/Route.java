@@ -158,6 +158,10 @@ public class Route implements Serializable {
         return CommonTools.timeToString(objectiveCalendar.get(Calendar.HOUR), objectiveCalendar.get(Calendar.MINUTE));
     }
 
+    public String getAllCoordinates() {
+        return initialLatitude + "," + initialLongitude + ";" + aLatitude + "," + aLongitude + ";" + bLatitude + "," + bLongitude + ";" + objectiveLatitude + "," + objectiveLongitude;
+    }
+
     //Automatic Getters
     public Calendar getInitialCalendar() {
         return initialCalendar;

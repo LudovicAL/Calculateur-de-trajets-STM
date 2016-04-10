@@ -49,10 +49,8 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapLon
     }
 
     private void loadMap() {
-        updateMarker(googleMap, actualMarker, actualCoordinates, BitmapDescriptorFactory.HUE_GREEN, getResources().getString(R.string.initialPosition));
-        updateMarker(googleMap, otherMarker, otherCoordinates, BitmapDescriptorFactory.HUE_RED, getResources().getString(R.string.initialPosition));
-        updatePolyline(googleMap);
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(actualCoordinates.getLongitude(), actualCoordinates.getLongitude()), 16));
+        updateMap();
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(actualCoordinates.getLatitude(), actualCoordinates.getLongitude()), 12));
         googleMap.setOnMapLongClickListener(this);
     }
 
@@ -61,32 +59,29 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapLon
         Log.d("test", "Long click registered.");
         actualCoordinates.setLatitude(latLng.latitude);
         actualCoordinates.setLongitude(latLng.longitude);
-        updateMarker(googleMap, actualMarker, actualCoordinates, BitmapDescriptorFactory.HUE_GREEN, getResources().getString(R.string.initialPosition));
-        updatePolyline(googleMap);
+        updateMap();
         Toast.makeText(MapActivity.this, getResources().getString(R.string.changeRegistered), Toast.LENGTH_SHORT).show();
     }
 
-    private void updateMarker(GoogleMap googleMap, Marker marker, Coordinates coordinates, float color, String title) {
-        if (marker != null) {
-            marker.remove();
+    private void updateMap() {
+        if (googleMap != null) {
+            googleMap.clear();
         }
+        addMarker(actualMarker, actualCoordinates, BitmapDescriptorFactory.HUE_GREEN, getResources().getString(R.string.initialPosition));
+        addMarker(otherMarker, otherCoordinates, BitmapDescriptorFactory.HUE_RED, getResources().getString(R.string.objectivePosition));
+        polyline = googleMap.addPolyline(new PolylineOptions().geodesic(true)
+                        .add(new LatLng(actualCoordinates.getLatitude(), actualCoordinates.getLongitude()))
+                        .add(new LatLng(otherCoordinates.getLatitude(), otherCoordinates.getLongitude()))
+        );
+    }
+
+    private void addMarker(Marker marker, Coordinates coordinates, float color, String title) {
         BitmapDescriptor actualCoordinatesMarkerColor = BitmapDescriptorFactory.defaultMarker(color);
         LatLng actualCoordinatesPosition = new LatLng(coordinates.getLatitude(), coordinates.getLongitude());
         marker = googleMap.addMarker(new MarkerOptions()
                 .position(actualCoordinatesPosition)
                 .title(title)
-                .snippet("Some description here")
                 .icon(actualCoordinatesMarkerColor));
-    }
-
-    private void updatePolyline(GoogleMap googleMap) {
-        if (polyline != null) {
-            polyline.remove();
-        }
-        polyline = googleMap.addPolyline(new PolylineOptions().geodesic(true)
-                        .add(new LatLng(actualCoordinates.getLatitude(), actualCoordinates.getLongitude()))
-                        .add(new LatLng(otherCoordinates.getLatitude(), otherCoordinates.getLongitude()))
-        );
     }
 
     //Retrieves the information passed with the Intent
@@ -105,5 +100,20 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapLon
         intent.putExtra("coordinates", (Serializable) actualCoordinates);
         setResult(RESULT_OK, intent);
         finish();
+    }
+
+    //Fired when user clicks the "Previous" button
+    public void onPreviousItineraryButtonClick(View v) {
+
+    }
+
+    //Fired when user clicks the "Next" button
+    public void onNextItineraryButtonClick(View v) {
+
+    }
+
+    //Fired when user clicks the "Select itinerary" button
+    public void onSelectItineraryButtonClick(View v) {
+
     }
 }

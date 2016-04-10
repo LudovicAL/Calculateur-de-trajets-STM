@@ -35,6 +35,9 @@
     <string name="itineraryFound">Found itineraries</string>
     <string name="line">Line</string>
     <string name="itineraryNumber">Itinary number</string>
+    <string name="previous">&lt;</string>
+    <string name="next">&gt;</string>
+    <string name="selectItinerary">Select this itinerary</string>
 
     <!-- Activity Display -->
     <string name="requiredTime">Required time</string>
