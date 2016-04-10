@@ -11,15 +11,26 @@
         android:id="@+id/buttonBack"
         android:gravity="center_horizontal"
         android:textAlignment="gravity"
-        android:onClick="onSelectorActivityBackButtonClick"
+        android:onClick="onMapActivityBackButtonClick"
         android:textStyle="bold"
         android:textSize="18sp" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/itineraryFound"
-        android:id="@+id/textViewResults"
+        android:text="@string/instruction"
+        android:id="@+id/textViewInstruction"
+        android:textAlignment="gravity"
+        android:gravity="center_horizontal"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:background="@android:color/holo_blue_dark" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:id="@+id/textViewSelectOnMap"
         android:textAlignment="gravity"
         android:gravity="center_horizontal"
         android:textSize="18sp"
@@ -29,14 +40,8 @@
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/map"
+        android:layout_height="match_parent"
+        android:id="@+id/mapForSelection"
         tools:context=".MapsActivity"
         android:name="com.google.android.gms.maps.MapFragment" />
-
-    <ListView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/listViewResults" />
-
 </LinearLayout>

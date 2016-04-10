@@ -22,6 +22,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -29,8 +30,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
 public class FillDataBaseService extends IntentService {
-
-    public static final int BATCH_SIZE = 100000;
+    public static int BATCH_SIZE = 100000;
 
     public FillDataBaseService() {
         super("");
@@ -38,22 +38,20 @@ public class FillDataBaseService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        //Progress
         startForeground(R.id.PROGRESS_NOTIFICATION_ID, new Notification.Builder(FillDataBaseService.this)
                 .setContentTitle("Chargement des données")
                 .setSmallIcon(android.R.drawable.ic_popup_sync)
                 .setCategory(Notification.CATEGORY_PROGRESS)
                 .setProgress(100, 0, true)
                 .build());
-        NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        //OpenOrCreate Database
         SQLiteDatabase db = openOrCreateDatabase("stm_gtfs", MODE_PRIVATE, null);
+        NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         String[] tables = intent.getExtras().getStringArray("tables");
         Log.d("test", "Population des tables: " + StringUtils.join(tables, ", "));
-        //Check if database is up to date
         Cursor feedInfoCursor = db.query("feed_info", new String[]{"feed_start_date", "feed_end_date"}, null, new String[]{}, null, null, null);
         OkHttpClient client = new OkHttpClient();
         if (feedInfoCursor.moveToFirst()) {
+            Log.d("test", "Checking if database is up to date.");
             String feedStartDate  = feedInfoCursor.getString(feedInfoCursor.getColumnIndex("feed_start_date"));
             String feedEndDate = feedInfoCursor.getString(feedInfoCursor.getColumnIndex("feed_end_date"));
             try {
@@ -61,13 +59,19 @@ public class FillDataBaseService extends IntentService {
                         .head()
                         .url("http://www.stm.info/sites/default/files/gtfs/gtfs_stm.zip")
                         .build()).execute().header("Last-Modified");
-                Log.i("test", feedStartDate + " <= " + lastModified + " <= " + feedEndDate);
-                // TODO: si feedStartDate <= lastModified <= feedEndDate then return!
+                Calendar feedStartDateCalendar = CommonTools.yyyymmddToCalendar(feedStartDate);
+                Calendar feedEndDateCalendar = CommonTools.yyyymmddToCalendar(feedEndDate);
+                Calendar lastModifiedCalendar = CommonTools.longDateStringToCalendar(lastModified);
+                Log.d("test", CommonTools.calendarToDateString(feedStartDateCalendar) + " <= " + CommonTools.calendarToDateString(lastModifiedCalendar) + " <= " + CommonTools.calendarToDateString(feedEndDateCalendar));
+                if (lastModifiedCalendar.compareTo(feedStartDateCalendar) >= 0) {
+                    if (lastModifiedCalendar.compareTo(feedEndDateCalendar) <= 0) {
+                        return;
+                    }
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        //Download files from the STM website
         Request req = new Request.Builder()
                 .get()
                 .url("http://www.stm.info/sites/default/files/gtfs/gtfs_stm.zip")
@@ -88,7 +92,7 @@ public class FillDataBaseService extends IntentService {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        //Prepare database for insertion
+        //Prepare database for massive insertion
         db.setForeignKeyConstraintsEnabled(false);
         db.rawQuery("pragma journal_mode=off", new String[]{});
         db.rawQuery("pragma synchronous=off", new String[]{});
@@ -104,7 +108,7 @@ public class FillDataBaseService extends IntentService {
                     String tableName = tables[i];
                     if (tableName.equals(currentEntry.getName().substring(0, currentEntry.getName().lastIndexOf(".")))) {
                         long begin = System.currentTimeMillis();
-                        Log.i("test", "Chargement de la table " + tableName + "...");
+                        Log.d("test", "Chargement de la table " + tableName + "...");
                         nm.notify(R.id.PROGRESS_NOTIFICATION_ID, new Notification.Builder(FillDataBaseService.this)
                                 .setContentTitle("Chargement de la table " + tableName + "...")
                                 .setSmallIcon(android.R.drawable.ic_popup_sync)
@@ -121,7 +125,7 @@ public class FillDataBaseService extends IntentService {
                                 batchBegin = System.currentTimeMillis();
                             }
                             for (Map.Entry<String, String> e : row.toMap().entrySet()) {
-                                if (e.getValue().isEmpty()) { //Manage empty values in CSV
+                                if (e.getValue().isEmpty()) { // gère les valeurs vides en CSV
                                     values.putNull(e.getKey());
                                 } else {
                                     values.put(e.getKey(), e.getValue());
@@ -132,7 +136,7 @@ public class FillDataBaseService extends IntentService {
                             if ((row.getRecordNumber() - 1) % BATCH_SIZE == BATCH_SIZE - 1) {
                                 insertHelper.prepareForInsert();
                                 insertHelper.execute();
-                                Log.i("test", "Inséré la batch #"
+                                Log.d("test", "Inséré la batch #"
                                         + (row.getRecordNumber() / BATCH_SIZE) + "/~" + ((currentEntry.getSize() / (cumulativeSizeApproximation / row.getRecordNumber())) / BATCH_SIZE)
                                         + " dans la table " + tableName
                                         + " en " + (System.currentTimeMillis() - batchBegin) + "ms"
@@ -145,11 +149,10 @@ public class FillDataBaseService extends IntentService {
                                         .build());
                             }
                         }
-                        // insert incomplete batch (if appliable)
+                        //Insert incomplete batch (if applicable)
                         insertHelper.prepareForInsert();
                         insertHelper.execute();
-
-                        Log.i("test", "Terminé l'insertion de la table " + tableName + " en " + (System.currentTimeMillis() - begin) + "ms");
+                        Log.d("test", "Terminé l'insertion de la table " + tableName + " en " + (System.currentTimeMillis() - begin) + "ms");
                     }
                 }
             }

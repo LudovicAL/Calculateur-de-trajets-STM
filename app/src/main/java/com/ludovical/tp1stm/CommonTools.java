@@ -1,10 +1,9 @@
 package com.ludovical.tp1stm;
 
-import android.widget.DatePicker;
-import android.widget.TimePicker;
-
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 public class CommonTools {
     //Converts a time value to a string
@@ -23,6 +22,61 @@ public class CommonTools {
             return "0" + i;
         } else {
             return "" + i;
+        }
+    }
+
+    public static Calendar yyyymmddToCalendar (String s) {
+        Calendar calendar = new GregorianCalendar();
+        SimpleDateFormat myDateFormat = new SimpleDateFormat("yyyyMMdd");
+        try {
+            calendar.setTime(myDateFormat.parse(s));
+            return calendar;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static Calendar longDateStringToCalendar (String s) {
+        if (s != null && !s.isEmpty()) {
+            String myDateString = "";
+            myDateString += s.substring(12, 16);    //Year
+            myDateString += monthAbreviationToNumber(s.substring(8, 11));   //Month
+            myDateString += s.substring(5, 7);   //DayOfMonth
+            return yyyymmddToCalendar(myDateString);
+        } else {
+            return null;
+        }
+    }
+
+    public static String monthAbreviationToNumber(String monthAsAbreviatedString) {
+        switch(monthAsAbreviatedString) {
+            case "Jan":
+                return "01";
+            case "Fev":
+                return "02";
+            case "Mar":
+                return "03";
+            case "Avr":
+                return "04";
+            case "May":
+                return "05";
+            case "Jun":
+                return "06";
+            case "Jul":
+                return "07";
+            case "Aug":
+                return "08";
+            case "Sep":
+                return "09";
+            case "Oct":
+                return "10";
+            case "Nov":
+                return "11";
+            case "Dec":
+                return "12";
+            default:
+                return "01";
         }
     }
 

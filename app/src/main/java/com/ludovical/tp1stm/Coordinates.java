@@ -1,6 +1,8 @@
 package com.ludovical.tp1stm;
 
-public class Coordinates {
+import java.io.Serializable;
+
+public class Coordinates implements Serializable {
 
     private String name;
     private double latitude;

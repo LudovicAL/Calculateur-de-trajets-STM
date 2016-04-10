@@ -1,11 +1,11 @@
 package com.ludovical.tp1stm;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteTransactionListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -23,6 +23,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -40,7 +41,8 @@ public class MainActivity extends AppCompatActivity {
     public static final int B_ARRIVAL_TIME = 29;
     public static final int MAX_WALKING_DISTANCE = 1500;
     public static final int NUMBER_OF_RESULTS = 5;
-    public static final Coordinates INITIAL_COORDINATES = new Coordinates("Pavillon André-Aisenstadt", 45.5010115, -73.6179101);
+    public static final int DATABASE_INITIAL_SCHEMA = 1;
+    public static final int DATABASE_MIGRATION_1_1 = 2;
 
     private Spinner spinner;
     private ArrayAdapter<CharSequence> spinnerAdapter;
@@ -50,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
     private Coordinates initialCoordinates;
     private Coordinates objectiveCoordinates;
     private boolean occupied;
+    private Button buttonInitialPosition;
+    private Button buttonObjectivePosition;
     private Button buttonDate;
     private Button buttonTime;
 
@@ -57,20 +61,28 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //Create a new CoordinatesSet ArrayList
-        createCoordinates();
+        //Initialize coordinates
+        initialCoordinates = new Coordinates("Pavillon André-Aisenstadt", 45.5010115, -73.6179101);
+        objectiveCoordinates = new Coordinates("Centre Bell", 45.4960704, -73.571504);
+        buttonInitialPosition = (Button)findViewById(R.id.buttonSelectInitialPosition);
+        buttonInitialPosition.setText(initialCoordinates.getName());
+        buttonObjectivePosition = (Button)findViewById(R.id.buttonSelectObjectivePosition);
+        buttonObjectivePosition.setText(objectiveCoordinates.getName());
         //Initialize calendar
         initialCalendar  = Calendar.getInstance();
         buttonDate = (Button)findViewById(R.id.buttonDate);
         buttonDate.setText(CommonTools.calendarToDateString(initialCalendar));
         buttonTime = (Button)findViewById(R.id.buttonTime);
         buttonTime.setText(CommonTools.calendarToTimeString(initialCalendar));
-        //Locating and filling the spinner
-        locateAndFillSpinner();
         //Creating the database
         db = openOrCreateDatabase("stm_gtfs", MODE_PRIVATE, null);
-        //Preparing the Schema
-        prepareSchema();
+        //Preparing the Schema and database
+        applyMigration(db, DATABASE_INITIAL_SCHEMA, R.raw.schema);
+        applyMigration(db, DATABASE_MIGRATION_1_1, R.raw.migration_1_1);
+        Intent fillDatabaseIntent = new Intent(MainActivity.this, FillDataBaseService.class);
+        String[] tables = {"calendar_dates", "feed_info", "stops", "routes", "shapes", "trips", "stop_times"};
+        fillDatabaseIntent.putExtra("tables", tables);
+        startService(fillDatabaseIntent);
     }
 
     @Override
@@ -125,12 +137,44 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    //On a click on the initial position selection button
+    public void onSelectInitialPositionButtonClick(View v) {
+        Intent intent = new Intent(getApplicationContext(), MapActivity.class);
+        intent.putExtra("actualCoordinates", (Serializable) initialCoordinates);
+        intent.putExtra("otherCoordinates", (Serializable) objectiveCoordinates);
+        intent.putExtra("message", getResources().getString(R.string.instructionInitialPosition));
+        startActivityForResult(intent, 1);
+    }
+
+    //On a click on the objective position selection button
+    public void onSelectObjectivePositionButtonClick(View v) {
+        Intent intent = new Intent(getApplicationContext(), MapActivity.class);
+        intent.putExtra("actualCoordinates", (Serializable) objectiveCoordinates);
+        intent.putExtra("otherCoordinates", (Serializable) initialCoordinates);
+        intent.putExtra("message", getResources().getString(R.string.instructionObjectivePosition));
+        startActivityForResult(intent, 2);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        if(resultCode == Activity.RESULT_OK) {
+            switch (requestCode) {
+                case 1:
+                    initialCoordinates = (Coordinates)intent.getSerializableExtra("coordinates");
+                    buttonInitialPosition.setText(initialCoordinates.getLatitude() + ", " + initialCoordinates.getLongitude());
+                    break;
+                case 2:
+                    objectiveCoordinates = (Coordinates)intent.getSerializableExtra("coordinates");
+                    buttonObjectivePosition.setText(objectiveCoordinates.getLatitude() + ", " + objectiveCoordinates.getLongitude());
+                    break;
+            }
+        }
+    }
+
     //On a click on the search button
     public void onSearchButtonClick(View v) {
         if (!occupied) {
             occupied = true;
-            initialCoordinates = INITIAL_COORDINATES;
-            objectiveCoordinates = spinnerCoordinates.get(spinner.getSelectedItemPosition());
             String query = "SELECT *," +
                     " (select group_concat(shape_pt_lat || ',' || shape_pt_lon, ';') from shapes" +
                     " where A_prime_B_prime_trips.shape_id = shapes.shape_id" +
@@ -162,26 +206,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             Toast.makeText(MainActivity.this, R.string.pleaseWait, Toast.LENGTH_LONG).show();
         }
-    }
-
-    //Creates a coordinatesSet array
-    private void createCoordinates() {
-        this.spinnerCoordinates = new ArrayList<Coordinates>();
-        String[] destinationsArray = this.getResources().getStringArray(R.array.destinations_values);
-        for(String s : destinationsArray) {
-            String name = s.substring(0, s.indexOf("(") - 1);
-            double latitude = CommonTools.stringToDouble(s.substring(s.indexOf("(") + 1, s.indexOf(",")));
-            double longitude = CommonTools.stringToDouble(s.substring(s.indexOf(",") + 2, s.indexOf(")")));
-            spinnerCoordinates.add(new Coordinates(name, latitude, longitude));
-        }
-    }
-
-    //Locates the spinner and fills it with predefined destinations values
-    private void locateAndFillSpinner() {
-        spinner = (Spinner) findViewById(R.id.spinnerDestinations);
-        spinnerAdapter = ArrayAdapter.createFromResource(this, R.array.destinations_values, android.R.layout.simple_spinner_item);
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(spinnerAdapter);
     }
 
     private class ASyncQuery extends AsyncTask<String, Void, Cursor> {
@@ -265,43 +289,30 @@ public class MainActivity extends AppCompatActivity {
         occupied = false;
     }
 
-    //Builds the SQL schema
-    private void prepareSchema() {
-        try {
-            InputStream schemaStream = getResources().openRawResource(R.raw.schema);
-            String schema = IOUtils.toString(schemaStream);
-            IOUtils.closeQuietly(schemaStream);
-            db.beginTransactionWithListener(new SQLiteTransactionListener() {
-                @Override
-                public void onBegin() {
-
+    //Apply migration to schema if applicable
+    private void applyMigration(SQLiteDatabase db, int version, int migrationId) {
+        if (db.needUpgrade(version)) {
+            InputStream migration = getResources().openRawResource(migrationId);
+            db.beginTransaction();
+            try {
+                String schema = IOUtils.toString(migration)
+                        .replaceAll("--.*\r?\n", " ") //For commentaries
+                        .replaceAll("\r?\n", " ");  //For new lines
+                for (String statement : schema.split(";")) {
+                    String st = StringUtils.normalizeSpace(statement);
+                    Log.d("test", st);
+                    if (!st.isEmpty())
+                        db.execSQL(st);
                 }
-
-                @Override
-                public void onCommit() {
-                    Log.d("test", "The schema was successfully created.");
-                    Intent fillDatabaseIntent = new Intent(MainActivity.this, FillDataBaseService.class);
-                    String[] tables = {"stops", "feed_info", "routes", "shapes", "trips", "calendar_dates", "stop_times"};
-                    fillDatabaseIntent.putExtra("tables", tables);
-                    startService(fillDatabaseIntent);
-                }
-
-                @Override
-                public void onRollback() {
-                    Log.d("", "The schema creation failed.");
-                }
-            });
-            for (String statement : schema.split(";")) {
-                statement = StringUtils.normalizeSpace(statement.replaceAll("[\r\n]", ""));
-                if (!statement.isEmpty()) {
-                    db.execSQL(statement);
-                }
+                db.setVersion(version);
+                db.setTransactionSuccessful();
+                Log.d("test", "La migration " + version + " a été appliquée.");
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                db.endTransaction();
+                IOUtils.closeQuietly(migration);
             }
-            db.setTransactionSuccessful();
-            db.endTransaction();
-            Log.d("", db.toString());
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 }

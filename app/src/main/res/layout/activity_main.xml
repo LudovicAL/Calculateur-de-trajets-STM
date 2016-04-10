@@ -14,7 +14,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/selectDestination"
+            android:text="@string/selectInitialPosition"
             android:id="@+id/textView"
             android:gravity="center_horizontal"
             android:textAlignment="gravity"
@@ -22,13 +22,36 @@
             android:background="@android:color/holo_blue_dark"
             android:textStyle="bold" />
 
-        <Spinner
+        <Button
+            style="?android:attr/buttonStyleSmall"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/spinnerDestinations"
-            android:spinnerMode="dropdown"
+            android:text="@string/selectInitialPositionButton"
+            android:id="@+id/buttonSelectInitialPosition"
+            android:onClick="onSelectInitialPositionButtonClick"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/selectObjectivePosition"
+            android:id="@+id/textView4"
             android:gravity="center_horizontal"
-            android:textAlignment="gravity" />
+            android:textAlignment="gravity"
+            android:textSize="20sp"
+            android:background="@android:color/holo_blue_dark"
+            android:textStyle="bold" />
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/selectObjectivePositionButton"
+            android:id="@+id/buttonSelectObjectivePosition"
+            android:onClick="onSelectObjectivePositionButtonClick"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
         <TextView
             android:layout_width="match_parent"

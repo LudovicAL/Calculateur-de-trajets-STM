@@ -10,21 +10,25 @@
 
     <!-- Activity Main -->
     <string name="origine_value" translatable="false">Pavillon André-Aisenstadt (45.5010115, −73.6179101)</string>
-    <string name="selectDestination">1 - Select a destination</string>
-    <string name="selectDate">2 - Select a departure date</string>
+    <string name="selectInitialPosition">1 - Mark your initial position</string>
+    <string name="selectInitialPositionButton">Click here to mark your initial position</string>
+    <string name="selectObjectivePosition">2 - Mark your destination</string>
+    <string name="selectObjectivePositionButton">Click here to mark your destination</string>
+    <string name="selectDate">3 - Select a departure date</string>
     <string name="selectDateButton">Click here to select date</string>
-    <string name="selectTime">3 - Select a departure time</string>
+    <string name="selectTime">4 - Select a departure time</string>
     <string name="selectTimeButton">Click here to select time</string>
-    <string name="launchSearch">4 - Launch search</string>
+    <string name="launchSearch">5 - Launch search</string>
     <string name="search">Search</string>
-    <string-array name="destinations_values">
-        <item>Pub McCarold (45.4961719, -73.6247091)</item>
-        <item>Centre Bell (45.4960704, -73.571504)</item>
-        <item>Club Soda (45.5100687, -73.5654437)</item>
-        <item>Station Angrignon (45.4445232, -73.6039207)</item>
-        <item>Aéroport Pierre-Elliott-Trudeau (45.4653214, -73.7400437)</item>
-        <item>Station Honoré-Beaugrand (45.5986388, -73.539667)</item>
-    </string-array>
+
+    <!-- Activity Map -->
+    <string name="instruction">Hold your finger somewhere on the map to move the marker.</string>
+    <string name="instructionInitialPosition">Please mark your initial position</string>
+    <string name="instructionObjectivePosition">Please mark your objective position</string>
+    <string name="initialPosition">Initial position</string>
+    <string name="objectivePosition">Objective position</string>
+    <string name="changeRegistered">Change registered</string>
+
 
     <!-- Activity Selector -->
     <string name="back">Back</string>

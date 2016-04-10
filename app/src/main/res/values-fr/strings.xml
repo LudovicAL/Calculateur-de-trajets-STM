@@ -40,4 +40,7 @@
     <string name="launchSearch">4 - Lancez la recherche</string>
     <string name="selectDateButton">Cliquez ici pour sélectionner une date</string>
     <string name="selectTimeButton">Cliquez ici pour sélectionner une heure</string>
+    <string name="changeRegistered">Changement enregistré</string>
+    <string name="initialPosition">Position initiale</string>
+    <string name="objectivePosition">Position de l\'objectif</string>
 </resources>
