@@ -6,13 +6,13 @@
     <string name="back">Retour</string>
     <string name="departureTime">Heure de départ</string>
     <string name="error">Une erreur est survenue</string>
-    <string name="itineraryFound">Itinéraires trouvés</string>
+    <string name="itineraryFound">itinéraire(s) trouvé(s)</string>
     <string name="itineraryNumber">Nombe d\'itinéraire(s)</string>
     <string name="meter">mètre(s)</string>
     <string name="requiredTime">Temps requis</string>
     <string name="search">Chercher</string>
-    <string name="selectDate">3 - Selectionnez une date</string>
-    <string name="selectTime">4 - Sélectionnez une heure</string>
+    <string name="selectDate">4 - Selectionnez une date</string>
+    <string name="selectTime">5 - Sélectionnez une heure</string>
     <string name="walkDistance">Distance de marche</string>
     <string name="arrivalStopName">Nom d\'arrêt à l\'arrivée</string>
     <string name="boardingStopName">Nom d\'arrêt à l\'embarquement</string>
@@ -22,21 +22,12 @@
     <string name="totalWalkingDistance">Distance de marche totale</string>
     <string name="transitArrivalTime">Heure d\'arrivée du transit</string>
     <string name="transitBoardingTime">Heure de débarquement du transit</string>
-
-    <string-array name="destinations_values">
-        <item>Pub McCarold (45.4961719, -73.6247091)</item>
-        <item>Centre Bell (45.4960704, -73.571504)</item>
-        <item>Club Soda (45.5100687, -73.5654437)</item>
-        <item>Station Angrignon (45.4445232, -73.6039207)</item>
-        <item>Aéroport Pierre-Elliott-Trudeau (45.4653214, -73.7400437)</item>
-        <item>Station Honoré-Beaugrand (45.5986388, -73.539667)</item>
-    </string-array>
     <string name="pleaseWait">L\'applcation cherche déjà un itinéraire. Ne pouvez-vous pas attendre!?</string>
     <string name="querySent">L\'application débute sa recherche. Veuillez patienter.</string>
     <string name="splashDescription">Aller presque n\'importe où à Montréal grâce au réseau de transport en commun de la ville.</string>
     <string name="splashTitle">STM Orienteur</string>
     <string name="line">Ligne</string>
-    <string name="launchSearch">5 - Lancez la recherche</string>
+    <string name="launchSearch">6 - Lancez la recherche</string>
     <string name="selectDateButton">Cliquez ici pour sélectionner une date</string>
     <string name="selectTimeButton">Cliquez ici pour sélectionner une heure</string>
     <string name="changeRegistered">Changement enregistré</string>
@@ -49,4 +40,7 @@
     <string name="selectInitialPositionButton">Cliquez ici pour marquer votre position initiale</string>
     <string name="selectObjectivePosition">2 - Marquez votre destination</string>
     <string name="selectObjectivePositionButton">Cliquez ici pour marquer votre destination</string>
+    <string name="selectItinerary">Sélectionner cet itinéraire</string>
+    <string name="zeroResult">Aucun résultat n\'a été trouvé. Changez les informations fournies et essayer de nouveau.</string>
+    <string name="adjustMaxWalkingDistance">3 - Ajustez la distance de marche maximale</string>
 </resources>

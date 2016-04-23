@@ -14,12 +14,14 @@
     <string name="selectInitialPositionButton">Click here to mark your initial position</string>
     <string name="selectObjectivePosition">2 - Mark your destination</string>
     <string name="selectObjectivePositionButton">Click here to mark your destination</string>
-    <string name="selectDate">3 - Select a departure date</string>
+    <string name="adjustMaxWalkingDistance">3 - Adjust the maximum walking distance</string>
+    <string name="selectDate">4 - Select a departure date</string>
     <string name="selectDateButton">Click here to select date</string>
-    <string name="selectTime">4 - Select a departure time</string>
+    <string name="selectTime">5 - Select a departure time</string>
     <string name="selectTimeButton">Click here to select time</string>
-    <string name="launchSearch">5 - Launch search</string>
+    <string name="launchSearch">6 - Launch search</string>
     <string name="search">Search</string>
+    <string name="zeroResult">Absolutely no result were found. Change the information above and try again.</string>
 
     <!-- Activity Map -->
     <string name="instruction">Hold your finger somewhere on the map to move the marker.</string>
@@ -32,11 +34,11 @@
 
     <!-- Activity Selector -->
     <string name="back">Back</string>
-    <string name="itineraryFound">Found itineraries</string>
+    <string name="itineraryFound">itinerarie(s) found</string>
     <string name="line">Line</string>
     <string name="itineraryNumber">Itinary number</string>
-    <string name="previous">&lt;</string>
-    <string name="next">&gt;</string>
+    <string name="previous" translatable="false">&lt;</string>
+    <string name="next" translatable="false">&gt;</string>
     <string name="selectItinerary">Select this itinerary</string>
 
     <!-- Activity Display -->

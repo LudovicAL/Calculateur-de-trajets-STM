@@ -124,6 +124,7 @@ public class Route implements Serializable {
         return a + b;
     }
 
+    //Redefinition of toString()
     @Override
     public String toString() {
         return R.string.line + ": " + tripHeadSign + "\n" + R.string.requiredTime + ": " + getRequiredTime();
@@ -160,6 +161,14 @@ public class Route implements Serializable {
 
     public String getAllCoordinates() {
         return initialLatitude + "," + initialLongitude + ";" + aLatitude + "," + aLongitude + ";" + bLatitude + "," + bLongitude + ";" + objectiveLatitude + "," + objectiveLongitude;
+    }
+
+    public Coordinates getInitialCoordinates() {
+        return new Coordinates("", initialLatitude, initialLongitude);
+    }
+
+    public Coordinates getObjectiveCoordinates() {
+        return new Coordinates("", objectiveLatitude, objectiveLongitude);
     }
 
     //Automatic Getters

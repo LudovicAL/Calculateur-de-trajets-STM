@@ -1,9 +1,12 @@
 package com.ludovical.tp1stm;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 
 public class CommonTools {
     //Converts a time value to a string
@@ -25,30 +28,37 @@ public class CommonTools {
         }
     }
 
+    //Converts a short date string to a Calendar object
     public static Calendar yyyymmddToCalendar (String s) {
-        Calendar calendar = new GregorianCalendar();
-        SimpleDateFormat myDateFormat = new SimpleDateFormat("yyyyMMdd");
-        try {
-            calendar.setTime(myDateFormat.parse(s));
-            return calendar;
-        } catch (ParseException e) {
-            e.printStackTrace();
+        if (s != null && !s.isEmpty()) {
+            Calendar calendar = new GregorianCalendar();
+            SimpleDateFormat myDateFormat = new SimpleDateFormat("yyyyMMdd");
+            try {
+                calendar.setTime(myDateFormat.parse(s));
+                return calendar;
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }
 
+    //Converts a long date string to a Calendar object
     public static Calendar longDateStringToCalendar (String s) {
         if (s != null && !s.isEmpty()) {
-            String myDateString = "";
-            myDateString += s.substring(12, 16);    //Year
-            myDateString += monthAbreviationToNumber(s.substring(8, 11));   //Month
-            myDateString += s.substring(5, 7);   //DayOfMonth
-            return yyyymmddToCalendar(myDateString);
-        } else {
-            return null;
+            Calendar calendar = new GregorianCalendar();
+            SimpleDateFormat myDateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.US);
+            try {
+                calendar.setTime(myDateFormat.parse(s));
+                return calendar;
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
+        return null;
     }
 
+    //Converts a month abreviation to a number
     public static String monthAbreviationToNumber(String monthAsAbreviatedString) {
         switch(monthAsAbreviatedString) {
             case "Jan":
@@ -80,6 +90,7 @@ public class CommonTools {
         }
     }
 
+    //Converts a Calendar's date to a string
     public static String calendarToDateString(Calendar calendar) {
         if (calendar != null) {
             SimpleDateFormat myDateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -89,6 +100,7 @@ public class CommonTools {
         }
     }
 
+    //Converts a Calendar's time to a string
     public static String calendarToTimeString(Calendar calendar) {
         if (calendar != null) {
             SimpleDateFormat myTimeFormat = new SimpleDateFormat("HH:mm:ss");
@@ -96,6 +108,15 @@ public class CommonTools {
         } else {
             return null;
         }
+    }
+
+    //Converts a Coordinates object to a LatLng object
+    public static LatLng coordinatesToLatLng(Coordinates coordinates) {
+        LatLng latLng = null;
+        if (coordinates != null) {
+            latLng = new LatLng(coordinates.getLatitude(), coordinates.getLongitude());
+        }
+        return latLng;
     }
 
     //Converts Latitude and Longitude distance to meters

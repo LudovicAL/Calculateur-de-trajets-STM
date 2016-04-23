@@ -20,7 +20,6 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import java.io.Serializable;
 
-
 public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapLongClickListener {
 
     private Coordinates actualCoordinates;
@@ -43,44 +42,49 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapLon
             @Override
             public void onMapReady(GoogleMap map) {
                 googleMap = map;
+                googleMap.getUiSettings().setMapToolbarEnabled(false);
                 loadMap();
             }
         });
     }
 
+    //Prepares the map object
     private void loadMap() {
         updateMap();
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(actualCoordinates.getLatitude(), actualCoordinates.getLongitude()), 12));
         googleMap.setOnMapLongClickListener(this);
     }
 
+    //Behavior when user long-clicks the map
     @Override
     public void onMapLongClick(LatLng latLng) {
         Log.d("test", "Long click registered.");
+        actualCoordinates.setName("");
         actualCoordinates.setLatitude(latLng.latitude);
         actualCoordinates.setLongitude(latLng.longitude);
         updateMap();
         Toast.makeText(MapActivity.this, getResources().getString(R.string.changeRegistered), Toast.LENGTH_SHORT).show();
     }
 
+    //Update the map's markers and polyline
     private void updateMap() {
         if (googleMap != null) {
             googleMap.clear();
+            addMarker(actualMarker, actualCoordinates, BitmapDescriptorFactory.HUE_GREEN);
+            addMarker(otherMarker, otherCoordinates, BitmapDescriptorFactory.HUE_RED);
+            polyline = googleMap.addPolyline(new PolylineOptions().geodesic(true)
+                            .add(new LatLng(actualCoordinates.getLatitude(), actualCoordinates.getLongitude()))
+                            .add(new LatLng(otherCoordinates.getLatitude(), otherCoordinates.getLongitude()))
+            );
         }
-        addMarker(actualMarker, actualCoordinates, BitmapDescriptorFactory.HUE_GREEN, getResources().getString(R.string.initialPosition));
-        addMarker(otherMarker, otherCoordinates, BitmapDescriptorFactory.HUE_RED, getResources().getString(R.string.objectivePosition));
-        polyline = googleMap.addPolyline(new PolylineOptions().geodesic(true)
-                        .add(new LatLng(actualCoordinates.getLatitude(), actualCoordinates.getLongitude()))
-                        .add(new LatLng(otherCoordinates.getLatitude(), otherCoordinates.getLongitude()))
-        );
     }
 
-    private void addMarker(Marker marker, Coordinates coordinates, float color, String title) {
+    //Add a marker on the map
+    private void addMarker(Marker marker, Coordinates coordinates, float color) {
         BitmapDescriptor actualCoordinatesMarkerColor = BitmapDescriptorFactory.defaultMarker(color);
         LatLng actualCoordinatesPosition = new LatLng(coordinates.getLatitude(), coordinates.getLongitude());
         marker = googleMap.addMarker(new MarkerOptions()
                 .position(actualCoordinatesPosition)
-                .title(title)
                 .icon(actualCoordinatesMarkerColor));
     }
 
@@ -94,26 +98,33 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapLon
         tv.setText(message);
     }
 
-    //Fired when user clicks the "Back" button
+    //Fired when user clicks the Application "Back" button
     public void onMapActivityBackButtonClick(View v) {
+        onBackPressed();
+    }
+
+    //Fired when user clicks the Android "Back" button
+    @Override
+    public void onBackPressed() {
         Intent intent = new Intent();
         intent.putExtra("coordinates", (Serializable) actualCoordinates);
         setResult(RESULT_OK, intent);
-        finish();
+        //finish();
+        super.onBackPressed();
     }
 
-    //Fired when user clicks the "Previous" button
-    public void onPreviousItineraryButtonClick(View v) {
-
+    //Saving instance state is good practice
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState.putSerializable("actualCoordinates", actualCoordinates);
     }
 
-    //Fired when user clicks the "Next" button
-    public void onNextItineraryButtonClick(View v) {
-
-    }
-
-    //Fired when user clicks the "Select itinerary" button
-    public void onSelectItineraryButtonClick(View v) {
-
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        actualCoordinates = (Coordinates)savedInstanceState.getSerializable("actualCoordinates");
+        LatLng latLng = CommonTools.coordinatesToLatLng(actualCoordinates);
+        onMapLongClick(latLng);
     }
 }

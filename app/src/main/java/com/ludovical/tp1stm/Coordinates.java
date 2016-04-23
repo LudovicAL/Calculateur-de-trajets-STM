@@ -16,7 +16,7 @@ public class Coordinates implements Serializable {
 
     @Override
     public String toString() {
-        return name + " (" + latitude + ", " + longitude + ")";
+        return "Lat: " + latitude + ", Lon:" + longitude;
     }
 
     public String getName() {

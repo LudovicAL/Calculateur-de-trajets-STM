@@ -20,7 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/itineraryFound"
-        android:id="@+id/textViewResults"
+        android:id="@+id/textViewResultNumber"
         android:textAlignment="gravity"
         android:gravity="center_horizontal"
         android:textSize="18sp"
@@ -34,7 +34,7 @@
         android:layout_height="wrap_content"
         android:text="@string/previous"
         android:id="@+id/buttonPrevious"
-        android:layout_below="@+id/textViewResults"
+        android:layout_below="@+id/textViewResultNumber"
         android:layout_alignParentLeft="true"
         android:textStyle="bold"
         android:onClick="onPreviousItineraryButtonClick" />
@@ -59,7 +59,7 @@
         android:layout_height="wrap_content"
         android:text="@string/next"
         android:id="@+id/buttonNext"
-        android:layout_below="@+id/textViewResults"
+        android:layout_below="@+id/textViewResultNumber"
         android:layout_alignParentRight="true"
         android:textStyle="bold"
         android:onClick="onNextItineraryButtonClick" />
